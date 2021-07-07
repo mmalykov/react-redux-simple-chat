@@ -7,7 +7,7 @@ export const ConversationsList: React.FC = () => {
     const conversation = conversations[0];
 
     return (
-        <Grid item xs={4}>
+        <Grid>
             <ConversationListItem conversation={conversation}/>
         </Grid>
     );
