@@ -13,11 +13,11 @@ export const ConversationListItem: React.FC<Props> = ({conversation, selectConve
     return (
         <ListItem button key={conversation.id} onClick={handleClick}>
             <ListItemIcon>
-                <Avatar alt={conversation.user.name} src="https://material-ui.com/static/images/avatar/1.jpg">
+                <Avatar alt={conversation.secondUser.name} src="https://material-ui.com/static/images/avatar/1.jpg">
                     If no avatar provided
                 </Avatar>
             </ListItemIcon>
-            <ListItemText primary={conversation.user.name} secondary={conversation.lastMessage.content}/>
+            <ListItemText primary={conversation.secondUser.name} secondary={conversation.lastMessage.content}/>
         </ListItem>
     );
 };
