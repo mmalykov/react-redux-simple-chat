@@ -11,6 +11,14 @@ type Props = {
 export const ConversationsList: React.FC<Props> = ({conversations}) => {
     const {selectConversation} = useActions();
 
+    if (conversations.length === 0) {
+        return (
+            <Grid>
+                Can't find user with provided name
+            </Grid>
+        );
+    }
+
     return (
         <Grid>
             {conversations.map(conversation =>
