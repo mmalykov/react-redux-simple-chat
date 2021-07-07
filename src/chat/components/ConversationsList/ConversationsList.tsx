@@ -13,7 +13,7 @@ export const ConversationsList: React.FC<Props> = ({conversations}) => {
 
     if (conversations.length === 0) {
         return (
-            <Grid>
+            <Grid container alignItems="center" justifyContent="center">
                 Can't find user with provided name
             </Grid>
         );

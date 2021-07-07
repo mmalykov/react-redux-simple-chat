@@ -20,7 +20,7 @@ export const ConversationContainer: React.FC = () => {
 
     if (!selectedConversation) {
         return (
-            <Grid item xs={8}>
+            <Grid container alignItems="center" justifyContent="center" item xs={8}>
                 Please select the conversation
             </Grid>
         );
