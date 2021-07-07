@@ -1,13 +1,23 @@
 import React from "react";
-import {ListItemText} from "@material-ui/core";
+import {ListItemText, makeStyles} from "@material-ui/core";
 import {Message as MessageType} from "../../../types/message";
 
 type Props = {
     message: MessageType;
+    isOwn?: boolean;
 }
 
-export const Message: React.FC<Props> = ({message}) => {
+const useStyles = makeStyles(() => ({
+    root: {
+        textAlign: 'right',
+    }
+}));
+
+export const Message: React.FC<Props> = ({message, isOwn = false}) => {
+    const classes = useStyles();
+    const appliedClasses = isOwn ? classes.root : '';
+
     return (
-        <ListItemText primary={message.content} secondary="09:31"/>
+        <ListItemText className={appliedClasses} primary={message.content} secondary="09:31"/>
     );
 };

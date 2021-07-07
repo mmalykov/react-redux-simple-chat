@@ -46,7 +46,7 @@ export const messages: Message[] = [
     {id: '31', conversationId: '2', content: 'OK', messageType: MessageType.TEXT, userId: '1'},
     {id: '32', conversationId: '2', content: 'Where are you?', messageType: MessageType.TEXT, userId: '3'},
     {id: '33', conversationId: '2', content: 'At home', messageType: MessageType.TEXT, userId: '1'},
-];
+].reverse();
 
 export const conversations: Conversation[] = [
     {
