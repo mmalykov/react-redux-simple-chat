@@ -24,7 +24,12 @@ export const chatReducer = (state = initialState, action: ChatAction): ChatState
         case ChatActionType.SELECT_CONVERSATION:
             return {...state, selectedConversation: action.payload as Conversation};
         case ChatActionType.FILTER_CONVERSATIONS:
-            return {...state, filteredConversations: state.conversations.filter(conversation => conversation.secondUser.name.includes(action.payload)) };
+            return {
+                ...state,
+                filteredConversations: state.conversations.filter(
+                    conversation => conversation.secondUser.name.toLowerCase().includes(action.payload.toLowerCase())
+                )
+            };
         default:
             return state
     }
