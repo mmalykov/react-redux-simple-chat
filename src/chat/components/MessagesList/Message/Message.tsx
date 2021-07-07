@@ -1,8 +1,13 @@
 import React from "react";
 import {ListItemText} from "@material-ui/core";
+import {Message as MessageType} from "../../../types/message";
 
-export const Message: React.FC = () => {
+type Props = {
+    message: MessageType;
+}
+
+export const Message: React.FC<Props> = ({message}) => {
     return (
-        <ListItemText primary="Hey, Iam Good! What about you ?" secondary="09:31"/>
+        <ListItemText primary={message.content} secondary="09:31"/>
     );
 };

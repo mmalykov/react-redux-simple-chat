@@ -24,6 +24,7 @@ export const conversations: Conversation[] = [
         secondUserId: '2',
         lastMessage: messages[messages.length - 1],
         user: users[0],
-        secondUser: users[1]
+        secondUser: users[1],
+        messages: messages.filter(({conversationId}) => conversationId === '1')
     },
 ];

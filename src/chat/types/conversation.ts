@@ -8,4 +8,5 @@ export interface Conversation {
     secondUserId: string;
     secondUser: User;
     lastMessage: Message;
+    messages: Message[];
 }
