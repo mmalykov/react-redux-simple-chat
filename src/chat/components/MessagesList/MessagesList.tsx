@@ -1,6 +1,6 @@
 import React from "react";
 import {List, ListItem, makeStyles} from "@material-ui/core";
-import {Message} from './Message/Message';
+import {MessageListItem} from './MessageListItem/MessageListItem';
 import {Conversation} from "../../types/conversation";
 
 
@@ -27,7 +27,7 @@ export const MessagesList: React.FC<Props> = ({selectedConversation}) => {
         <List className={classes.root}>
             {messages.map(message => (
                 <ListItem key={message.id}>
-                    <Message message={message} isOwn={message.userId === userId}/>
+                    <MessageListItem message={message} isOwn={message.userId === userId}/>
                 </ListItem>
             ))}
         </List>

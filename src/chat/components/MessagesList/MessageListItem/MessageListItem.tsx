@@ -13,7 +13,7 @@ const useStyles = makeStyles(() => ({
     }
 }));
 
-export const Message: React.FC<Props> = ({message, isOwn = false}) => {
+export const MessageListItem: React.FC<Props> = ({message, isOwn = false}) => {
     const classes = useStyles();
     const appliedClasses = isOwn ? classes.root : '';
 
