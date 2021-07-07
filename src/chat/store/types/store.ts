@@ -1,7 +1,10 @@
+import {Conversation} from "../../types/conversation";
+import {Message} from "../../types/message";
+
 export interface ChatState {
-    conversations: [];
-    filteredConversations: [];
-    selectedConversation: any;
+    conversations: Conversation[];
+    filteredConversations: Conversation[];
+    selectedConversation: Conversation | null;
 }
 
 export enum ChatActionType {
@@ -12,12 +15,12 @@ export enum ChatActionType {
 
 export interface SendMessageAction {
     type: ChatActionType.SEND_MESSAGE;
-    payload: any;
+    payload: Message;
 }
 
 export interface SelectConversationAction {
     type: ChatActionType.SELECT_CONVERSATION;
-    payload: any;
+    payload: Conversation;
 }
 
 export interface FilterConversationMessageAction {
