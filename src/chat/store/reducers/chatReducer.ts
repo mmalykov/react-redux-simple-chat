@@ -1,8 +1,9 @@
 import {ChatAction, ChatActionType, ChatState} from "../types/store";
+import {conversations} from "../../../testData";
 
 const initialState: ChatState = {
-    conversations: [],
-    filteredConversations: [],
+    conversations: conversations,
+    filteredConversations: conversations,
     selectedConversation: null
 };
 
@@ -15,3 +16,5 @@ export const chatReducer = (state = initialState, action: ChatAction): ChatState
             return state
     }
 };
+
+export type RootState = ReturnType<typeof chatReducer>

@@ -1,20 +1,23 @@
 import React from "react";
-import {Conversation} from "../../../types/conversation";
 import {Avatar, ListItem, ListItemIcon, ListItemText} from "@material-ui/core";
+import {Conversation} from "../../../types/conversation";
 
 type Props = {
     conversation: Conversation;
+    selectConversation: Function;
 };
 
-export const ConversationListItem: React.FC<Props> = ({ conversation }) => {
+export const ConversationListItem: React.FC<Props> = ({conversation, selectConversation}) => {
+    const handleClick = () => selectConversation(conversation);
+
     return (
-        <ListItem button key="RemySharp">
+        <ListItem button key={conversation.id} onClick={handleClick}>
             <ListItemIcon>
-                <Avatar alt="Remy Sharp" src="https://material-ui.com/static/images/avatar/1.jpg">
+                <Avatar alt={conversation.user.name} src="https://material-ui.com/static/images/avatar/1.jpg">
                     If no avatar provided
                 </Avatar>
             </ListItemIcon>
-            <ListItemText primary="John Wick"  secondary="Last message text"/>
+            <ListItemText primary={conversation.user.name} secondary={conversation.lastMessage.content}/>
         </ListItem>
     );
 };

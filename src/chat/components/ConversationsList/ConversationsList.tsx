@@ -1,14 +1,24 @@
 import React from "react";
 import {Grid} from "@material-ui/core";
 import {ConversationListItem} from "./ConversationsListItem/ConversationListItem";
-import {conversations} from "../../../testData";
+import {Conversation} from "../../types/conversation";
+import {useActions} from "../../store/hooks/useActions";
 
-export const ConversationsList: React.FC = () => {
-    const conversation = conversations[0];
+type Props = {
+    conversations: Conversation[];
+}
+
+export const ConversationsList: React.FC<Props> = ({conversations}) => {
+    const {selectConversation} = useActions();
 
     return (
         <Grid>
-            <ConversationListItem conversation={conversation}/>
+            {conversations.map(conversation =>
+                <ConversationListItem
+                    key={conversation.id}
+                    conversation={conversation}
+                    selectConversation={selectConversation}/>)
+            }
         </Grid>
     );
 };
