@@ -1,9 +1,13 @@
 import React from "react";
+import {Grid, Paper} from "@material-ui/core";
+import {ConversationsList} from "../ConversationsList/ConversationsList";
+import {ConversationContainer} from "../ConversationContainer/ConversationContainer";
 
 export const Chat: React.FC = () => {
     return (
-        <div>
-            Chat
-        </div>
+        <Grid container component={Paper}>
+            <ConversationsList />
+            <ConversationContainer />
+        </Grid>
     );
 };
