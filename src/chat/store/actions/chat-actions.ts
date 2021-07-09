@@ -1,4 +1,5 @@
 import {
+    ChatAction,
     ChatActionType,
     FilterConversationMessageAction,
     SelectConversationAction,
@@ -6,6 +7,24 @@ import {
 } from "../types/store";
 import {MessageType} from "../../types/message";
 import {Conversation} from "../../types/conversation";
+import {Dispatch} from "redux";
+import {conversations} from "../../../testData";
+
+export const fetchConversations = () => {
+    return async (dispatch: Dispatch<ChatAction>) => {
+        try {
+            dispatch({type: ChatActionType.FETCH_CONVERSATIONS});
+            setTimeout(() => {
+                dispatch({type: ChatActionType.FETCH_CONVERSATIONS_SUCCESSFUL, payload: conversations})
+            }, 500)
+        } catch (e) {
+            dispatch({
+                type: ChatActionType.FETCH_CONVERSATIONS_ERROR,
+                payload: `Error during loading conversations`,
+            });
+        }
+    }
+};
 
 export const addTextMessage = (content: string, conversationId: string, userId: string): SendMessageAction => ({
     type: ChatActionType.SEND_MESSAGE,

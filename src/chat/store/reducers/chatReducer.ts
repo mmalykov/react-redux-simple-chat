@@ -1,15 +1,27 @@
 import {ChatAction, ChatActionType, ChatState} from "../types/store";
-import {conversations} from "../../../testData";
 import {Conversation} from "../../types/conversation";
 
 const initialState: ChatState = {
-    conversations: conversations,
-    filteredConversations: conversations,
-    selectedConversation: null
+    conversations: [],
+    filteredConversations: [],
+    selectedConversation: null,
+    isConversationsLoading: false,
+    conversationsLoadingError: '',
 };
 
 export const chatReducer = (state = initialState, action: ChatAction): ChatState => {
     switch (action.type) {
+        case ChatActionType.FETCH_CONVERSATIONS:
+            return {...state, isConversationsLoading: true};
+        case ChatActionType.FETCH_CONVERSATIONS_SUCCESSFUL:
+            return {
+                ...state,
+                isConversationsLoading: false,
+                conversations: [...action.payload],
+                filteredConversations: [...action.payload]
+            };
+        case ChatActionType.FETCH_CONVERSATIONS_ERROR:
+            return {...state, conversationsLoadingError: action.payload};
         case ChatActionType.SEND_MESSAGE:
             return {
                 ...state,
