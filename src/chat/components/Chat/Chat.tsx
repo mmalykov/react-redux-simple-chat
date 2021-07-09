@@ -1,14 +1,21 @@
 import React from "react";
-import {Grid, Paper} from "@material-ui/core";
+import {Grid, makeStyles, Paper} from "@material-ui/core";
 import {ConversationContainer} from "../ConversationContainer/ConversationContainer";
 import {ConversationListContainer} from "../ConversationListContainer/ConversationListContainer";
-import './Chat.css';
+
+const useStyles = makeStyles(() => ({
+    root: {
+        height: '100%',
+    }
+}));
 
 export const Chat: React.FC = () => {
+    const classes = useStyles();
+
     return (
-        <Grid className="chat" container component={Paper}>
-            <ConversationListContainer />
-            <ConversationContainer />
+        <Grid container component={Paper} className={classes.root}>
+            <ConversationListContainer/>
+            <ConversationContainer/>
         </Grid>
     );
 };
