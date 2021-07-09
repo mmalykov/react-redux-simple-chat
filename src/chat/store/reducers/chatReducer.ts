@@ -21,7 +21,7 @@ export const chatReducer = (state = initialState, action: ChatAction): ChatState
                 filteredConversations: [...action.payload]
             };
         case ChatActionType.FETCH_CONVERSATIONS_ERROR:
-            return {...state, conversationsLoadingError: action.payload};
+            return {...state, conversationsLoadingError: action.payload, isConversationsLoading: false};
         case ChatActionType.SEND_MESSAGE:
             return {
                 ...state,
