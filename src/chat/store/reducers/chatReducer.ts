@@ -11,18 +11,15 @@ const initialState: ChatState = {
 export const chatReducer = (state = initialState, action: ChatAction): ChatState => {
     switch (action.type) {
         case ChatActionType.SEND_MESSAGE:
-            const messages = [...(state.selectedConversation as Conversation).messages];
-            messages.unshift(action.payload);
-
             return {
                 ...state,
                 selectedConversation: {
                     ...state.selectedConversation,
-                    messages,
+                    messages: [action.payload, ...state.selectedConversation?.messages ?? []],
                 } as Conversation
             };
         case ChatActionType.SELECT_CONVERSATION:
-            return {...state, selectedConversation: action.payload as Conversation};
+            return {...state, selectedConversation: action.payload};
         case ChatActionType.FILTER_CONVERSATIONS:
             return {
                 ...state,
