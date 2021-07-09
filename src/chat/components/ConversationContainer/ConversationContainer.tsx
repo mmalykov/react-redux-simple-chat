@@ -15,7 +15,7 @@ const useConversationContainerStyles = makeStyles(() => ({
 export const ConversationContainer: React.FC = () => {
     const containerClasses = useConversationContainerStyles();
     const {selectedConversation} = useTypedSelector(state => state.chat);
-    const {addMessage} = useChatActions();
+    const {addTextMessage} = useChatActions();
 
     if (!selectedConversation) {
         return (
@@ -26,13 +26,7 @@ export const ConversationContainer: React.FC = () => {
     }
 
     const addMessageHandler = (content: string) => {
-        addMessage({
-            content,
-            userId: selectedConversation.userId,
-            conversationId: selectedConversation.id,
-            messageType: MessageType.TEXT,
-            id: `${Date.now()}`
-        });
+        addTextMessage(content, selectedConversation.id, selectedConversation.userId);
     };
 
     return (

@@ -4,12 +4,18 @@ import {
     SelectConversationAction,
     SendMessageAction
 } from "../types/store";
-import {Message} from "../../types/message";
+import {MessageType} from "../../types/message";
 import {Conversation} from "../../types/conversation";
 
-export const addMessage = (message: Message): SendMessageAction => ({
+export const addTextMessage = (content: string, conversationId: string, userId: string): SendMessageAction => ({
     type: ChatActionType.SEND_MESSAGE,
-    payload: message
+    payload: {
+        content,
+        conversationId,
+        userId,
+        messageType: MessageType.TEXT,
+        id: `${Date.now()}`
+    }
 });
 
 export const selectConversation = (conversation: Conversation): SelectConversationAction => ({
