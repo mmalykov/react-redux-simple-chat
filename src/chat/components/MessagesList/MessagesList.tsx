@@ -11,11 +11,10 @@ type Props = {
 const useStyles = makeStyles(() => ({
     root: {
         width: '100%',
-        maxHeight: 'calc(100% - 56px)',
         overflowY: 'auto',
         display: 'flex',
         flexDirection: 'column-reverse',
-        flexGrow: 1
+        flex: '1 0 85%',
     }
 }));
 
