@@ -23,15 +23,27 @@ export const chatReducer = (state = initialState, action: ChatAction): ChatState
         case ChatActionType.FETCH_CONVERSATIONS_ERROR:
             return {...state, conversationsLoadingError: action.payload, isConversationsLoading: false};
         case ChatActionType.SEND_MESSAGE:
+            const updatedConversation = {
+                ...state.selectedConversation,
+                messages: [action.payload, ...state.selectedConversation?.messages ?? []],
+            } as Conversation;
+
+            const conversations = [...state.conversations];
+            conversations.splice(
+                state.conversations.findIndex(c => c.id === state.selectedConversation?.id),
+                1,
+                updatedConversation
+            );
+
             return {
                 ...state,
-                selectedConversation: {
-                    ...state.selectedConversation,
-                    messages: [action.payload, ...state.selectedConversation?.messages ?? []],
-                } as Conversation
+                conversations,
+                selectedConversation: updatedConversation
             };
         case ChatActionType.SELECT_CONVERSATION:
-            return {...state, selectedConversation: action.payload};
+            const selectedConversation = state.conversations.find(c => c.id === action.payload);
+
+            return {...state, selectedConversation: selectedConversation as Conversation};
         case ChatActionType.FILTER_CONVERSATIONS:
             return {
                 ...state,

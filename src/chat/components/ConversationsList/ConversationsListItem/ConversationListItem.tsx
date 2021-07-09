@@ -8,7 +8,7 @@ type Props = {
 };
 
 export const ConversationListItem: React.FC<Props> = ({conversation, selectConversation}) => {
-    const handleClick = () => selectConversation(conversation);
+    const handleClick = () => selectConversation(conversation.id);
 
     return (
         <ListItem button key={conversation.id} onClick={handleClick}>

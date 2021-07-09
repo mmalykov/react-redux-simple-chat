@@ -39,7 +39,7 @@ export interface SendMessageAction {
 
 export interface SelectConversationAction {
     type: ChatActionType.SELECT_CONVERSATION;
-    payload: Conversation;
+    payload: string;
 }
 
 export interface FilterConversationMessageAction {

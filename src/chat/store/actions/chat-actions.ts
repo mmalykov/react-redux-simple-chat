@@ -37,9 +37,9 @@ export const addTextMessage = (content: string, conversationId: string, userId: 
     }
 });
 
-export const selectConversation = (conversation: Conversation): SelectConversationAction => ({
+export const selectConversation = (conversationId: string): SelectConversationAction => ({
     type: ChatActionType.SELECT_CONVERSATION,
-    payload: conversation
+    payload: conversationId
 });
 
 export const filterConversations = (query: string): FilterConversationMessageAction => ({
