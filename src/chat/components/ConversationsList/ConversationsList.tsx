@@ -2,14 +2,14 @@ import React from "react";
 import {Grid} from "@material-ui/core";
 import {ConversationListItem} from "./ConversationsListItem/ConversationListItem";
 import {Conversation} from "../../types/conversation";
-import {useActions} from "../../store/hooks/useActions";
+import {useChatActions} from "../../store/hooks/useChatActions";
 
 type Props = {
     conversations: Conversation[];
 }
 
 export const ConversationsList: React.FC<Props> = ({conversations}) => {
-    const {selectConversation} = useActions();
+    const {selectConversation} = useChatActions();
 
     if (conversations.length === 0) {
         return (

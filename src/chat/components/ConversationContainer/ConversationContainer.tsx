@@ -3,8 +3,7 @@ import {Grid, makeStyles} from "@material-ui/core";
 import {MessagesList} from "../MessagesList/MessagesList";
 import {AddMessage} from "../AddMessage/AddMessage";
 import {useTypedSelector} from "../../../store/hooks/useTypedSelector";
-import {useActions} from "../../store/hooks/useActions";
-import {MessageType} from "../../types/message";
+import {useChatActions} from "../../store/hooks/useChatActions";
 
 const useConversationContainerStyles = makeStyles(() => ({
     root: {
@@ -16,7 +15,7 @@ const useConversationContainerStyles = makeStyles(() => ({
 export const ConversationContainer: React.FC = () => {
     const containerClasses = useConversationContainerStyles();
     const {selectedConversation} = useTypedSelector(state => state.chat);
-    const {addMessage} = useActions();
+    const {addMessage} = useChatActions();
 
     if (!selectedConversation) {
         return (

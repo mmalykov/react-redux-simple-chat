@@ -3,12 +3,12 @@ import {Grid} from "@material-ui/core";
 import {ConversationsList} from "../ConversationsList/ConversationsList";
 import {useTypedSelector} from "../../../store/hooks/useTypedSelector";
 import debounce from "@material-ui/core/utils/debounce";
-import {useActions} from "../../store/hooks/useActions";
+import {useChatActions} from "../../store/hooks/useChatActions";
 import {SearchTextField} from "../SearchTextField/SearchTextField";
 
 export const ConversationListContainer: React.FC = () => {
     const {filteredConversations} = useTypedSelector(state => state.chat);
-    const {filterConversations} = useActions();
+    const {filterConversations} = useChatActions();
     const filterConversationsDebounced = debounce(filterConversations, 500);
 
     return (
