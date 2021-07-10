@@ -1,10 +1,13 @@
-import React from "react";
-import {ListItemText, makeStyles} from "@material-ui/core";
-import {Message as MessageType} from "../../../types/message";
+import React, {useMemo} from "react";
+import {ListItemText, makeStyles, Typography} from "@material-ui/core";
+import {Message} from "../../../types/message";
+import {User} from "../../../../models/user";
 
 type Props = {
-    message: MessageType;
+    message: Message;
+    user: User;
     isOwn?: boolean;
+    inMultiUserConversation?: boolean;
 }
 
 const useStyles = makeStyles(() => ({
@@ -13,11 +16,25 @@ const useStyles = makeStyles(() => ({
     }
 }));
 
-export const MessageListItem: React.FC<Props> = ({message, isOwn = false}) => {
+export const MessageListItem: React.FC<Props> = ({message, user, isOwn = false, inMultiUserConversation = false}) => {
     const classes = useStyles();
     const appliedClasses = isOwn ? classes.root : '';
+    const date = new Date(message.timestamp);
+    const secondaryText = useMemo(() => [date.getHours(), date.getMinutes(), date.getSeconds()].join(':'), [message.timestamp]);
 
     return (
-        <ListItemText className={appliedClasses} primary={message.content} secondary="09:31"/>
+        <ListItemText
+            className={appliedClasses}
+            primary={
+                <React.Fragment>
+                    {!isOwn && inMultiUserConversation && (
+                        <Typography color="secondary">
+                            {user.username}
+                        </Typography>
+                    )}
+                    {message.content}
+                </React.Fragment>
+            }
+            secondary={secondaryText}/>
     );
 };
