@@ -48,12 +48,15 @@ export const messages: Message[] = [
     {id: '33', conversationId: '2', content: 'At home', messageType: MessageType.TEXT, userId: '1'},
 ].reverse();
 
+const [lastMessage1] = messages.filter(({conversationId}) => conversationId === '1');
+const [lastMessage2] = messages.filter(({conversationId}) => conversationId === '2');
+
 export const conversations: Conversation[] = [
     {
         id: '1',
         userId: '1',
         secondUserId: '2',
-        lastMessage: messages.filter(({conversationId}) => conversationId === '2').pop() as Message,
+        lastMessage: lastMessage1,
         user: users[0],
         secondUser: users[1],
         messages: messages.filter(({conversationId}) => conversationId === '1')
@@ -61,7 +64,7 @@ export const conversations: Conversation[] = [
         id: '2',
         userId: '1',
         secondUserId: '3',
-        lastMessage: messages.filter(({conversationId}) => conversationId === '2').pop() as Message,
+        lastMessage: lastMessage2,
         user: users[0],
         secondUser: users[2],
         messages: messages.filter(({conversationId}) => conversationId === '2')

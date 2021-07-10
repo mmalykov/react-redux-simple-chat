@@ -7,6 +7,7 @@ const initialState: ChatState = {
     selectedConversation: null,
     isConversationsLoading: false,
     conversationsLoadingError: '',
+    draftMessages: {},
 };
 
 export const chatReducer = (state = initialState, action: ChatAction): ChatState => {
@@ -22,24 +23,32 @@ export const chatReducer = (state = initialState, action: ChatAction): ChatState
             };
         case ChatActionType.FETCH_CONVERSATIONS_ERROR:
             return {...state, conversationsLoadingError: action.payload, isConversationsLoading: false};
-        case ChatActionType.SEND_MESSAGE:
+        case ChatActionType.SEND_MESSAGE: {
+            const {conversations, filteredConversations, selectedConversation} = state;
+            const messages = [action.payload, ...selectedConversation?.messages ?? []];
+            const [lastMessage] = messages;
             const updatedConversation = {
                 ...state.selectedConversation,
-                messages: [action.payload, ...state.selectedConversation?.messages ?? []],
+                messages,
+                lastMessage,
             } as Conversation;
-
-            const conversations = [...state.conversations];
-            conversations.splice(
-                state.conversations.findIndex(c => c.id === state.selectedConversation?.id),
-                1,
-                updatedConversation
-            );
 
             return {
                 ...state,
-                conversations,
+                conversations: replaceConversation(conversations, (selectedConversation as Conversation).id, updatedConversation),
+                filteredConversations: replaceConversation(filteredConversations, (selectedConversation as Conversation).id, updatedConversation),
                 selectedConversation: updatedConversation
             };
+        }
+        case ChatActionType.STORE_DRAFT_MESSAGE:
+            const {conversationId, content} = action.payload;
+            const {[conversationId]: previousContent, ...restDraftMessages} = state.draftMessages;
+            const draftMessages = {
+                ...restDraftMessages,
+                [conversationId]: content,
+            };
+
+            return {...state, draftMessages};
         case ChatActionType.SELECT_CONVERSATION:
             const selectedConversation = state.conversations.find(c => c.id === action.payload);
 
@@ -55,5 +64,17 @@ export const chatReducer = (state = initialState, action: ChatAction): ChatState
             return state
     }
 };
+
+function replaceConversation(conversations: Conversation[], conversationId: string, updatedConversation: Conversation): Conversation[] {
+    const updatedConversations = [...conversations];
+
+    updatedConversations.splice(
+        conversations.findIndex(c => c.id === conversationId),
+        1,
+        updatedConversation
+    );
+
+    return updatedConversations;
+}
 
 export type RootState = ReturnType<typeof chatReducer>
