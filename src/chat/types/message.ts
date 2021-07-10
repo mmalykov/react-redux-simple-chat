@@ -9,4 +9,5 @@ export interface Message {
     conversationId: string;
     messageType: MessageType;
     content: string;
+    timestamp: number;
 }

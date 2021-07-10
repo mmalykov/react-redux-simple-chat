@@ -6,7 +6,6 @@ import {
     SendMessageAction
 } from "../types/store";
 import {MessageType} from "../../types/message";
-import {Conversation} from "../../types/conversation";
 import {Dispatch} from "redux";
 import {conversations} from "../../../testData";
 
@@ -33,6 +32,7 @@ export const addTextMessage = (content: string, conversationId: string, userId: 
         conversationId,
         userId,
         messageType: MessageType.TEXT,
+        timestamp: Date.now(),
         id: `${Date.now()}`
     }
 });

@@ -5,8 +5,7 @@ export interface Conversation {
     id: string;
     userId: string;
     user: User;
-    secondUserId: string;
-    secondUser: User;
+    participants: User[];
     lastMessage: Message;
     messages: Message[];
 }
