@@ -7,7 +7,13 @@ import {useChatActions} from "../../store/hooks/useChatActions";
 import {SearchTextField} from "../SearchTextField/SearchTextField";
 
 export const ConversationListContainer: React.FC = () => {
-    const {conversations, filteredConversations, conversationsLoadingError, isConversationsLoading} = useTypedSelector(state => state.chat);
+    const {
+        conversations,
+        filteredConversations,
+        conversationsLoadingError,
+        isConversationsLoading,
+        draftMessages,
+    } = useTypedSelector(state => state.chat);
     const {filterConversations} = useChatActions();
     const filterConversationsDebounced = debounce(filterConversations, 500);
 
@@ -27,7 +33,7 @@ export const ConversationListContainer: React.FC = () => {
                 </Grid>
             )}
             {conversations?.length > 0 && (
-                <ConversationsList conversations={filteredConversations}/>
+                <ConversationsList conversations={filteredConversations} draftMessages={draftMessages}/>
             )}
         </Grid>
     );

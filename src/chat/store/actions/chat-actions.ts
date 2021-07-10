@@ -6,7 +6,6 @@ import {
     SendMessageAction
 } from "../types/store";
 import {MessageType} from "../../types/message";
-import {Conversation} from "../../types/conversation";
 import {Dispatch} from "redux";
 import {conversations} from "../../../testData";
 
@@ -35,6 +34,11 @@ export const addTextMessage = (content: string, conversationId: string, userId: 
         messageType: MessageType.TEXT,
         id: `${Date.now()}`
     }
+});
+
+export const storeDraftTextMessage = (conversationId: string, content: string) => ({
+    type: ChatActionType.STORE_DRAFT_MESSAGE,
+    payload: {conversationId, content},
 });
 
 export const selectConversation = (conversationId: string): SelectConversationAction => ({

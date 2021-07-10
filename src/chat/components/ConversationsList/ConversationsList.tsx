@@ -3,12 +3,14 @@ import {Grid} from "@material-ui/core";
 import {ConversationListItem} from "./ConversationsListItem/ConversationListItem";
 import {Conversation} from "../../types/conversation";
 import {useChatActions} from "../../store/hooks/useChatActions";
+import {DraftMessagesMap} from "../../store/types/store";
 
 type Props = {
     conversations: Conversation[];
+    draftMessages: DraftMessagesMap;
 }
 
-export const ConversationsList: React.FC<Props> = ({conversations}) => {
+export const ConversationsList: React.FC<Props> = ({conversations, draftMessages}) => {
     const {selectConversation} = useChatActions();
 
     if (conversations.length === 0) {
@@ -25,6 +27,7 @@ export const ConversationsList: React.FC<Props> = ({conversations}) => {
                 <ConversationListItem
                     key={conversation.id}
                     conversation={conversation}
+                    draftMessage={draftMessages[conversation.id]}
                     selectConversation={selectConversation}/>)
             }
         </Grid>

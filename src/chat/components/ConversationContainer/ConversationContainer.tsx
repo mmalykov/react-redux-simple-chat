@@ -14,8 +14,11 @@ const useConversationContainerStyles = makeStyles(() => ({
 
 export const ConversationContainer: React.FC = () => {
     const containerClasses = useConversationContainerStyles();
-    const {selectedConversation} = useTypedSelector(state => state.chat);
-    const {addTextMessage} = useChatActions();
+    const {selectedConversation, draftMessages} = useTypedSelector(state => state.chat);
+    const messageContent = selectedConversation ?
+        (draftMessages[selectedConversation.id] ?? '') :
+        '';
+    const {addTextMessage, storeDraftTextMessage} = useChatActions();
 
     if (!selectedConversation) {
         return (
@@ -32,7 +35,11 @@ export const ConversationContainer: React.FC = () => {
     return (
         <Grid container direction="column" item xs={8} className={containerClasses.root}>
             <MessagesList selectedConversation={selectedConversation}/>
-            <AddMessage addMessage={addMessageHandler}/>
+            <AddMessage
+                conversationId={selectedConversation.id}
+                draftMessage={messageContent}
+                addMessage={addMessageHandler}
+                storeDraftMessage={storeDraftTextMessage}/>
         </Grid>
     );
 };
