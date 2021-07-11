@@ -33,7 +33,7 @@ export const ConversationContainer: React.FC = () => {
     };
 
     return (
-        <Grid container direction="column" item xs={8} className={containerClasses.root}>
+        <Grid container direction="column" item xs={9} className={containerClasses.root}>
             <MessagesList selectedConversation={selectedConversation}/>
             <AddMessage
                 conversationId={selectedConversation.id}

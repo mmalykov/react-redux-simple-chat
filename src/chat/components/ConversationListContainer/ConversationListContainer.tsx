@@ -18,7 +18,7 @@ export const ConversationListContainer: React.FC = () => {
     const filterConversationsDebounced = debounce(filterConversations, 500);
 
     return (
-        <Grid item xs={4}>
+        <Grid item xs={3}>
             <Grid item xs={12} style={{padding: '10px'}}>
                 <SearchTextField queryChanged={filterConversationsDebounced}/>
             </Grid>
