@@ -24,7 +24,7 @@ export const MessagesList: React.FC<Props> = ({selectedConversation}) => {
     const {messages = [], userId, user, participants} = selectedConversation;
     const allParticipantsMap: { [userId: string]: User } = useMemo(
         () => [user, ...participants].reduce((acc, p) => ({...acc, [p.id]: p}), {}),
-        [selectedConversation]
+        [user, participants]
     );
 
     return (

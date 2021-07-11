@@ -19,8 +19,11 @@ const useStyles = makeStyles(() => ({
 export const MessageListItem: React.FC<Props> = ({message, user, isOwn = false, inMultiUserConversation = false}) => {
     const classes = useStyles();
     const appliedClasses = isOwn ? classes.root : '';
-    const date = new Date(message.timestamp);
-    const secondaryText = useMemo(() => [date.getHours(), date.getMinutes(), date.getSeconds()].join(':'), [message.timestamp]);
+    const secondaryText = useMemo(() => {
+        const date = new Date(message.timestamp);
+
+        return [date.getHours(), date.getMinutes(), date.getSeconds()].join(':')
+    }, [message.timestamp]);
 
     return (
         <ListItemText

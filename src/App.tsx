@@ -1,7 +1,8 @@
 import React from 'react';
-import {Chat} from "./chat/components/Chat/Chat";
 import {AppBar} from "./components/AppBar/AppBar";
 import {makeStyles} from "@material-ui/core";
+import {BrowserRouter} from "react-router-dom";
+import {AppRouter} from "./components/AppRouter/AppRouter";
 
 const useStyles = makeStyles(() => ({
     app: {
@@ -21,10 +22,10 @@ function App() {
 
     return (
         <div className={classes.app}>
-            <AppBar/>
-            <div className={classes.chat}>
-                <Chat/>
-            </div>
+            <BrowserRouter>
+                <AppBar/>
+                <AppRouter/>
+            </BrowserRouter>
         </div>
     );
 }
