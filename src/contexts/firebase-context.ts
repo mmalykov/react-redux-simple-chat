@@ -15,8 +15,7 @@ firebase.initializeApp(firebaseConfig);
 
 export const firebaseContextValue = {
     auth: firebase.auth(),
-    firestore: firebase.firestore(),
-    firebase
+    firestore: firebase.firestore()
 };
 
 export const FirebaseContext = createContext(firebaseContextValue);

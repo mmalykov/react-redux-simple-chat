@@ -1,7 +1,11 @@
-import React from "react";
+import React, {useState} from "react";
 import * as yup from "yup";
 import {useFormik} from "formik";
 import {Button, Grid, makeStyles, TextField} from "@material-ui/core";
+import {useUsersActions} from "../../users/store";
+import { useHistory } from "react-router-dom";
+
+type ActionType = 'register' | 'login';
 
 const validationSchema = yup.object({
     email: yup
@@ -17,10 +21,16 @@ const validationSchema = yup.object({
 const useStyles = makeStyles(() => ({
     root: {
         flexGrow: 1
+    },
+    buttonsContainer: {
+        marginTop: 10
     }
 }));
 
 export const Login: React.FC = () => {
+    const history = useHistory();
+    const {registerUser, loginUser} = useUsersActions();
+    const [actionType, setActionType] = useState<ActionType>('login');
     const classes = useStyles();
     const formik = useFormik({
         initialValues: {
@@ -29,7 +39,12 @@ export const Login: React.FC = () => {
         },
         validationSchema: validationSchema,
         onSubmit: (values) => {
-            alert(JSON.stringify(values, null, 2));
+            const {email, password} = values;
+            if (actionType === 'register') {
+                registerUser(email, password, history);
+            }
+
+            loginUser(email, password, history);
         },
     });
 
@@ -61,9 +76,16 @@ export const Login: React.FC = () => {
                     error={formik.touched.password && Boolean(formik.errors.password)}
                     helperText={formik.touched.password && formik.errors.password}
                 />
-                <Button fullWidth color="primary" variant="contained"  type="submit">
-                    Login
-                </Button>
+                <Grid className={classes.buttonsContainer} container justifyContent="space-around">
+                    <Button color="primary" variant="contained"  type="submit">
+                        {actionType === 'login' ? 'Login' : 'Register'}
+                    </Button>
+                    {actionType === 'login' && (
+                        <Button color="primary" variant="text" onClick={() => setActionType('register')}>
+                            Create new user
+                        </Button>
+                    )}
+                </Grid>
             </form>
         </Grid>
     );

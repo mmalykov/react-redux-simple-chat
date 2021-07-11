@@ -3,7 +3,7 @@ import {Avatar, ListItem, ListItemIcon, ListItemText, Typography} from "@materia
 import {AvatarGroup} from "@material-ui/lab";
 import {Conversation} from "../../../types/conversation";
 
-const buildAvatarText = (fullName: string) => {
+const buildAvatarText = (fullName: string = '') => {
     const [firstName, lastName] = fullName.split(' ');
 
     return `${firstName.charAt(0)} ${lastName.charAt(0)}`;
@@ -40,8 +40,8 @@ export const ConversationListItem: React.FC<Props> = ({conversation, selectConve
                 <AvatarGroup max={3}>
                     {participants.map(participant => {
                         return (
-                            <Avatar key={participant.id} alt={participant.name} src={participant.avatarUrl}>
-                                {buildAvatarText(participant.name)}
+                            <Avatar key={participant.id} alt={participant?.name} src={participant?.avatarUrl}>
+                                {buildAvatarText(participant?.name)}
                             </Avatar>
                         );
                     })}

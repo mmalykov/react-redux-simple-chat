@@ -1,5 +1,5 @@
 import {Message} from "./message";
-import {User} from "../../models/user";
+import {User} from "../../users/types/user";
 
 export interface Conversation {
     id: string;

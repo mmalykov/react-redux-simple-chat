@@ -2,7 +2,7 @@ import React, {useMemo} from "react";
 import {List, ListItem, makeStyles} from "@material-ui/core";
 import {MessageListItem} from './MessageListItem/MessageListItem';
 import {Conversation} from "../../types/conversation";
-import {User} from "../../../models/user";
+import {User} from "../../../users/types/user";
 
 
 type Props = {

@@ -1,6 +1,6 @@
 import {Message, MessageType} from "../chat/types/message";
 import {Conversation} from "../chat/types/conversation";
-import {User} from "../models/user";
+import {User} from "../users/types/user";
 
 export const users: User[] = [
     {id: '1', name: 'Mike M', username: 'mikem', email: 'mike@g.com'},

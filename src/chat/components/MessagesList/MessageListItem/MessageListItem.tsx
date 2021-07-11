@@ -1,7 +1,7 @@
 import React, {useMemo} from "react";
 import {ListItemText, makeStyles, Typography} from "@material-ui/core";
 import {Message} from "../../../types/message";
-import {User} from "../../../../models/user";
+import {User} from "../../../../users/types/user";
 
 type Props = {
     message: Message;
