@@ -1,20 +1,23 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {CssBaseline} from "@material-ui/core";
+import {FirebaseContext, firebaseContextValue} from './contexts/firebase-context';
 import {Provider} from "react-redux";
 import {store} from "./store";
+import App from './App';
+import './index.css';
 
 ReactDOM.render(
-  <React.StrictMode>
-      <Provider store={store}>
-          <CssBaseline />
-          <App />
-      </Provider>
-  </React.StrictMode>,
-  document.getElementById('root')
+    <React.StrictMode>
+        <FirebaseContext.Provider value={firebaseContextValue}>
+            <Provider store={store}>
+                <CssBaseline/>
+                <App/>
+            </Provider>
+        </FirebaseContext.Provider>
+    </React.StrictMode>,
+    document.getElementById('root')
 );
 
 // If you want to start measuring performance in your app, pass a function
