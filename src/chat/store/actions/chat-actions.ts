@@ -32,6 +32,7 @@ export const addTextMessage = (content: string, conversationId: string, userId: 
         conversationId,
         userId,
         messageType: MessageType.TEXT,
+        timestamp: Date.now(),
         id: `${Date.now()}`
     }
 });
