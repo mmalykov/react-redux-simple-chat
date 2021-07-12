@@ -11,7 +11,7 @@ export enum UsersActionType {
     REGISTER_USER_SUCCESSFUL = 'REGISTER_USER_SUCCESSFUL',
     REGISTER_USER_ERROR = 'REGISTER_USER_ERROR',
     LOGIN_USER = 'LOGIN_USER',
-    LOGIN_USER_SUCCESSFUL = 'LOGIN_USER_SUCCESSFUL',
+    SET_CURRENT_USER = 'SET_CURRENT_USER',
     LOGIN_USER_ERROR = 'LOGIN_USER_ERROR',
 }
 
@@ -33,8 +33,8 @@ export interface LoginUserAction {
     type: UsersActionType.LOGIN_USER;
 }
 
-export interface LoginUserSuccessfulAction {
-    type: UsersActionType.LOGIN_USER_SUCCESSFUL;
+export interface SetCurrentUserAction {
+    type: UsersActionType.SET_CURRENT_USER;
     payload: User;
 }
 
@@ -48,5 +48,5 @@ export type UsersAction =
     RegisterUserSuccessfulAction |
     RegisterUserErrorAction |
     LoginUserAction |
-    LoginUserSuccessfulAction |
+    SetCurrentUserAction |
     LoginUserErrorAction;

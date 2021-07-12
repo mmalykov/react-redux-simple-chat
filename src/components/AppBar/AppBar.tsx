@@ -13,6 +13,8 @@ import MenuIcon from "@material-ui/icons/Menu";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import MoreIcon from "@material-ui/icons/More";
 import {CreateConversation} from "../../chat/components/CreateConversation/CreateConversation";
+import {paths} from "../../routes";
+import {NavLink} from "react-router-dom";
 
 const useStyles = makeStyles((theme: Theme) => ({
     grow: {
@@ -77,7 +79,11 @@ export const AppBar: React.FC = () => {
             open={isMenuOpen}
             onClose={handleMenuClose}
         >
-            <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+            <NavLink to={paths.account}>
+                <MenuItem onClick={handleMenuClose}>
+                    My account
+                </MenuItem>
+            </NavLink>
         </Menu>
     );
 
@@ -90,18 +96,18 @@ export const AppBar: React.FC = () => {
             keepMounted
             transformOrigin={{vertical: 'top', horizontal: 'right'}}
             open={isMobileMenuOpen}
-            onClose={handleMobileMenuClose}
-        >
+            onClose={handleMobileMenuClose}>
             <MenuItem onClick={handleProfileMenuOpen}>
-                <IconButton
-                    aria-label="account of current user"
-                    aria-controls="primary-search-account-menu"
-                    aria-haspopup="true"
-                    color="inherit"
-                >
-                    <AccountCircle/>
-                </IconButton>
-                <p>My account</p>
+                <NavLink to={paths.account}>
+                    <IconButton
+                        aria-label="account of current user"
+                        aria-controls="primary-search-account-menu"
+                        aria-haspopup="true"
+                        color="inherit">
+                        <AccountCircle/>
+                    </IconButton>
+                    <p>My account</p>
+                </NavLink>
             </MenuItem>
         </Menu>
     );
@@ -123,7 +129,7 @@ export const AppBar: React.FC = () => {
                     </Typography>
                     <div className={classes.grow}/>
                     <div className={classes.sectionDesktop}>
-                        <CreateConversation />
+                        <CreateConversation/>
                         <IconButton
                             edge="end"
                             aria-label="account of current user"
@@ -136,6 +142,7 @@ export const AppBar: React.FC = () => {
                         </IconButton>
                     </div>
                     <div className={classes.sectionMobile}>
+                        <CreateConversation/>
                         <IconButton
                             aria-label="show more"
                             aria-controls={mobileMenuId}

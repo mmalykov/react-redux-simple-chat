@@ -5,7 +5,7 @@ import {User} from "../../types/user";
 import * as h from 'history';
 import {paths} from "../../../routes";
 import firebase from "firebase";
-import {fetchOneDocumentByFieldValue} from "../../../integrations";
+import {fetchOneDocumentByFieldValue, updateDocumentInCollection} from "../../../integrations";
 
 export const registerUser = (email: string, password: string, history: h.History) => {
     return async (dispatch: Dispatch<UsersAction>) => {
@@ -41,7 +41,7 @@ export const loginUser = (email: string, password: string, history: h.History) =
                 avatarUrl: user?.photoURL as string
             }
 
-            await dispatch({type: UsersActionType.LOGIN_USER_SUCCESSFUL, payload: userPayload});
+            await dispatch({type: UsersActionType.SET_CURRENT_USER, payload: userPayload});
             history.push(paths.chat);
         } catch (e) {
             dispatch({type: UsersActionType.LOGIN_USER_ERROR, payload: e.message,});
@@ -49,10 +49,18 @@ export const loginUser = (email: string, password: string, history: h.History) =
     }
 };
 
-export const setCurrentUser = (authId?: string) => {
+export const updateUser = (user: User) => {
+    return async (dispatch: Dispatch<UsersAction>) => {
+        await updateDocumentInCollection<User>('users', user.id, user);
+
+        dispatch({type: UsersActionType.SET_CURRENT_USER, payload: user});
+    };
+};
+
+export const fetchCurrentUser = (authId?: string) => {
     return async (dispatch: Dispatch<UsersAction>) => {
         const user = await fetchOneDocumentByFieldValue<User>('users', 'authId', authId);
 
-        dispatch({type: UsersActionType.LOGIN_USER_SUCCESSFUL, payload: {authId, ...user}});
+        dispatch({type: UsersActionType.SET_CURRENT_USER, payload: {authId, ...user}});
     };
 };

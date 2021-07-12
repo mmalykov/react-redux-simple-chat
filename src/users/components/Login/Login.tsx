@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import * as yup from "yup";
 import {useFormik} from "formik";
 import {Button, Grid, makeStyles, TextField} from "@material-ui/core";
-import {useUsersActions} from "../../users/store";
+import {useUsersActions} from "../../store";
 import { useHistory } from "react-router-dom";
 
 type ActionType = 'register' | 'login';

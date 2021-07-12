@@ -9,7 +9,7 @@ const initialState: UsersState = {
 export const usersReducer = (state = initialState, action: UsersAction): UsersState => {
     switch (action.type) {
         case UsersActionType.REGISTER_USER_SUCCESSFUL:
-        case UsersActionType.LOGIN_USER_SUCCESSFUL:
+        case UsersActionType.SET_CURRENT_USER:
             return {...state, currentUser: action.payload};
         case UsersActionType.REGISTER_USER_ERROR:
             return {...state, registerError: action.payload};
