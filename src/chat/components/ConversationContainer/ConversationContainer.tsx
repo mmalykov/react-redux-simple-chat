@@ -34,7 +34,7 @@ export const ConversationContainer: React.FC = () => {
         );
     }
 
-    const addMessageHandler = (content: string) => {
+    const handleAddMessage = (content: string) => {
         sendTextMessage(content, selectedConversation.id, selectedConversation.userId);
     };
 
@@ -44,7 +44,7 @@ export const ConversationContainer: React.FC = () => {
             <AddMessage
                 conversationId={selectedConversation.id}
                 draftMessage={messageContent}
-                addMessage={addMessageHandler}
+                addMessage={handleAddMessage}
                 storeDraftMessage={storeDraftTextMessage}/>
         </Grid>
     );

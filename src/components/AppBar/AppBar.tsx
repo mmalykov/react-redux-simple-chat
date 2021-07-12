@@ -125,7 +125,7 @@ export const AppBar: React.FC = () => {
                         <MenuIcon/>
                     </IconButton>
                     <Typography className={classes.title} variant="h6" noWrap>
-                        My lovely chat
+                        <NavLink to={paths.chat}>My lovely chat</NavLink>
                     </Typography>
                     <div className={classes.grow}/>
                     <div className={classes.sectionDesktop}>

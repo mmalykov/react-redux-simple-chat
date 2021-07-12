@@ -3,11 +3,15 @@ import {useConversationsActions} from "../../../store/hooks";
 import debounce from "@material-ui/core/utils/debounce";
 import {SearchTextField} from "../../SearchTextField/SearchTextField";
 
-export const ConversationListSearch: React.FC = () => {
+type Props = {
+    disabled: boolean;
+};
+
+export const ConversationListSearch: React.FC<Props> = ({disabled}) => {
     const {filterConversations} = useConversationsActions();
     const filterConversationsDebounced = debounce(filterConversations, 500);
 
     return (
-        <SearchTextField queryChanged={filterConversationsDebounced}/>
+        <SearchTextField disabled={disabled} queryChanged={filterConversationsDebounced}/>
     );
 };

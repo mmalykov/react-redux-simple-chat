@@ -3,9 +3,10 @@ import {TextField} from "@material-ui/core";
 
 type Props = {
     queryChanged: (query: string) => void;
+    disabled: boolean;
 }
 
-export const SearchTextField: React.FC<Props> = ({queryChanged}) => {
+export const SearchTextField: React.FC<Props> = ({queryChanged, disabled = false}) => {
     const [query, setQuery] = useState('');
     const handleInputChange = (e: any) => {
         const content = e.target.value;
@@ -19,6 +20,7 @@ export const SearchTextField: React.FC<Props> = ({queryChanged}) => {
             variant="outlined"
             fullWidth
             value={query}
+            disabled={disabled}
             onChange={handleInputChange} />
     );
 };
