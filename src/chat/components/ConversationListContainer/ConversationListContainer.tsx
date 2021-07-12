@@ -1,23 +1,27 @@
-import React from "react";
+import React, {useContext, useEffect} from "react";
 import {Grid} from "@material-ui/core";
 import {ConversationsList} from "../ConversationsList/ConversationsList";
-import debounce from "@material-ui/core/utils/debounce";
-import {useChatActions} from "../../store/hooks/useChatActions";
-import {SearchTextField} from "../SearchTextField/SearchTextField";
 import {useSelector} from "react-redux";
-import {selectConversations, selectConversationsLoading, selectDraftMessages} from "../../store/selectors";
+import {selectConversationsLoading} from "../../store/selectors";
+import {ConversationListSearch} from "../ConversationsList/ConversationListSearch/ConversationListSearch";
+import {useChatActions} from "../../store/hooks/useChatActions";
+import {FirebaseContext} from "../../../contexts/firebaseContext";
+import {useAuthState} from "react-firebase-hooks/auth";
 
 export const ConversationListContainer: React.FC = () => {
-    const {conversations, filteredConversations} = useSelector(selectConversations);
+    const {auth} = useContext(FirebaseContext);
+    const [user] = useAuthState(auth);
+    const {fetchConversations} = useChatActions();
     const {conversationsLoadingError, isConversationsLoading} = useSelector(selectConversationsLoading);
-    const {draftMessages} = useSelector(selectDraftMessages);
-    const {filterConversations} = useChatActions();
-    const filterConversationsDebounced = debounce(filterConversations, 500);
+
+    useEffect(() => {
+        fetchConversations(user?.uid);
+    }, [user]);
 
     return (
         <Grid item xs={3}>
             <Grid item xs={12} style={{padding: '10px'}}>
-                <SearchTextField queryChanged={filterConversationsDebounced}/>
+                <ConversationListSearch/>
             </Grid>
             {isConversationsLoading && (
                 <Grid container alignItems="center" justifyContent="center">
@@ -29,9 +33,7 @@ export const ConversationListContainer: React.FC = () => {
                     {conversationsLoadingError}
                 </Grid>
             )}
-            {conversations?.length > 0 && (
-                <ConversationsList conversations={filteredConversations} draftMessages={draftMessages}/>
-            )}
+            <ConversationsList/>
         </Grid>
     );
 };

@@ -1,16 +1,13 @@
 import React from "react";
 import {Grid} from "@material-ui/core";
 import {ConversationListItem} from "./ConversationsListItem/ConversationListItem";
-import {Conversation} from "../../types/conversation";
 import {useChatActions} from "../../store/hooks/useChatActions";
-import {DraftMessagesMap} from "../../store/types/store";
+import {useSelector} from "react-redux";
+import {selectConversations, selectDraftMessages} from "../../store/selectors";
 
-type Props = {
-    conversations: Conversation[];
-    draftMessages: DraftMessagesMap;
-}
-
-export const ConversationsList: React.FC<Props> = ({conversations, draftMessages}) => {
+export const ConversationsList: React.FC = () => {
+    const {conversations, filteredConversations} = useSelector(selectConversations);
+    const {draftMessages} = useSelector(selectDraftMessages);
     const {selectConversation, fetchConversationMessages} = useChatActions();
     const selectConversationHandler = (conversationId: string) => {
         selectConversation(conversationId);
@@ -18,6 +15,10 @@ export const ConversationsList: React.FC<Props> = ({conversations, draftMessages
     };
 
     if (conversations.length === 0) {
+        return null;
+    }
+
+    if (filteredConversations.length === 0) {
         return (
             <Grid container alignItems="center" justifyContent="center">
                 Can't find user with provided name
@@ -27,7 +28,7 @@ export const ConversationsList: React.FC<Props> = ({conversations, draftMessages
 
     return (
         <Grid>
-            {conversations.map(conversation =>
+            {filteredConversations.map(conversation =>
                 <ConversationListItem
                     key={conversation.id}
                     conversation={conversation}

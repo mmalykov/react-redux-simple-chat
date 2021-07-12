@@ -17,6 +17,7 @@ export interface ChatState {
 }
 
 export enum ChatActionType {
+    FETCH_CONVERSATIONS = 'FETCH_CONVERSATIONS',
     FETCH_CONVERSATIONS_SUCCESSFUL = 'FETCH_CONVERSATIONS_SUCCESSFUL',
     FETCH_CONVERSATIONS_ERROR = 'FETCH_CONVERSATIONS_ERROR',
     FETCH_CONVERSATION_MESSAGES_SUCCESSFUL = 'FETCH_CONVERSATION_MESSAGES_SUCCESSFUL',
@@ -26,7 +27,11 @@ export enum ChatActionType {
     ADD_NEW_CONVERSATION = 'ADD_NEW_CONVERSATION',
     SELECT_CONVERSATION = 'SELECT_CONVERSATION',
     STORE_DRAFT_MESSAGE = 'STORE_DRAFT_MESSAGE',
-    FILTER_CONVERSATIONS = 'FILTER_CONVERSATIONS'
+    FILTER_CONVERSATIONS = 'FILTER_CONVERSATIONS',
+}
+
+export interface FetchConversationsAction {
+    type: ChatActionType.FETCH_CONVERSATIONS;
 }
 
 export interface FetchConversationsSuccessfulAction {
@@ -82,6 +87,7 @@ export interface FilterConversationsAction {
 }
 
 export type ChatAction =
+    FetchConversationsAction |
     FetchConversationsSuccessfulAction |
     FetchConversationsErrorAction |
     FetchConversationMessagesSuccessfulAction |

@@ -2,7 +2,6 @@ import React, {useContext, useEffect} from "react";
 import {Grid, makeStyles, Paper} from "@material-ui/core";
 import {ConversationContainer} from "../ConversationContainer/ConversationContainer";
 import {ConversationListContainer} from "../ConversationListContainer/ConversationListContainer";
-import {useChatActions} from "../../store/hooks/useChatActions";
 import {FirebaseContext} from "../../../contexts/firebaseContext";
 import {useAuthState} from "react-firebase-hooks/auth";
 import {useUsersActions} from "../../../users/store";
@@ -19,12 +18,10 @@ export const Chat: React.FC = () => {
     const {auth} = useContext(FirebaseContext);
     const [user] = useAuthState(auth);
     const {setCurrentUser} = useUsersActions();
-    const {fetchConversations} = useChatActions();
 
     useEffect(() => {
         setCurrentUser(user?.uid);
-        fetchConversations(user?.uid);
-    });
+    }, [user]);
 
     return (
         <Grid container component={Paper} className={classes.root}>

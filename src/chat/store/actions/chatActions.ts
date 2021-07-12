@@ -23,6 +23,8 @@ import {
 export const fetchConversations = (authId?: string) => {
     return async (dispatch: Dispatch<ChatAction>) => {
         try {
+            dispatch({type: ChatActionType.FETCH_CONVERSATIONS});
+
             const conversationsSnapshot = await fetchAllDocuments('conversations');
 
             const conversationIds = conversationsSnapshot.docs.map(doc => doc.id);

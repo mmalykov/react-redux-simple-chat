@@ -14,6 +14,8 @@ const initialState: ChatState = {
 
 export const chatReducer = (state = initialState, action: ChatAction): ChatState => {
     switch (action.type) {
+        case ChatActionType.FETCH_CONVERSATIONS:
+            return {...state, isConversationsLoading: true};
         case ChatActionType.FETCH_CONVERSATIONS_SUCCESSFUL:
             return {
                 ...state,
