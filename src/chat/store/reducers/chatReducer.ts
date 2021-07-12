@@ -23,18 +23,15 @@ export const chatReducer = (state = initialState, action: ChatAction): ChatState
             };
         case ChatActionType.FETCH_CONVERSATIONS_ERROR:
             return {...state, conversationsLoadingError: action.payload, isConversationsLoading: false};
-        case ChatActionType.SEND_MESSAGE: {
-            const {conversations, filteredConversations, selectedConversation, messages: oldMessages} = state;
-            const messages = [action.payload, ...oldMessages];
-            const [lastMessage] = messages;
+        case ChatActionType.UPDATE_SELECTED_CONVERSATION_WITH_LAST_MESSAGE: {
+            const {conversations, filteredConversations, selectedConversation} = state;
             const updatedConversation = {
                 ...state.selectedConversation,
-                lastMessage,
+                lastMessage: action.payload,
             } as Conversation;
 
             return {
                 ...state,
-                messages,
                 conversations: replaceConversation(conversations, (selectedConversation as Conversation).id, updatedConversation),
                 filteredConversations: replaceConversation(filteredConversations, (selectedConversation as Conversation).id, updatedConversation),
                 selectedConversation: updatedConversation

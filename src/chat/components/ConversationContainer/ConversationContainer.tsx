@@ -1,11 +1,11 @@
-import React, {useContext, useEffect} from "react";
+import React, {useEffect} from "react";
 import {Grid, makeStyles} from "@material-ui/core";
 import {MessagesList} from "../MessagesList/MessagesList";
 import {AddMessage} from "../AddMessage/AddMessage";
 import {useChatActions} from "../../store/hooks/useChatActions";
 import {useSelector} from "react-redux";
 import {selectConversations, selectDraftMessages, selectMessages, selectMessagesLoading} from "../../store/selectors";
-import {FirebaseContext} from "../../../contexts/firebase-context";
+import {useConversationMessagesSnapshot} from "../../hooks/useConversationMessagesSnapshot";
 
 const useConversationContainerStyles = makeStyles(() => ({
     root: {
@@ -16,29 +16,19 @@ const useConversationContainerStyles = makeStyles(() => ({
 
 export const ConversationContainer: React.FC = () => {
     const containerClasses = useConversationContainerStyles();
-    const {firestore} = useContext(FirebaseContext);
     const {selectedConversation} = useSelector(selectConversations);
     const {messages} = useSelector(selectMessages);
     const {selectConversationError} = useSelector(selectMessagesLoading);
     const {draftMessages} = useSelector(selectDraftMessages);
     const {fetchConversationMessagesSuccessful, sendTextMessage, storeDraftTextMessage} = useChatActions();
+    const messagesSnapshot = useConversationMessagesSnapshot(selectedConversation);
     const messageContent = selectedConversation ?
         (draftMessages[selectedConversation.id] ?? '') :
         '';
 
     useEffect(() => {
-        if (!selectedConversation) {
-            return;
-        }
-
-        return firestore
-            .collection('messages')
-            .where('conversationId', '==', selectedConversation?.id)
-            .orderBy('createdAt', 'desc')
-            .onSnapshot(querySnapshot => {
-                fetchConversationMessagesSuccessful(querySnapshot.docs);
-            });
-    }, [fetchConversationMessagesSuccessful, firestore, selectedConversation]);
+        fetchConversationMessagesSuccessful(messagesSnapshot);
+    }, [messagesSnapshot]);
 
     if (!selectedConversation) {
         return (

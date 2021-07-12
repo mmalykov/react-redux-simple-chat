@@ -101,7 +101,7 @@ export const sendTextMessage = (content: string, conversationId: string, userId:
                 .doc(conversationId)
                 .update({lastMessageId: doc.id});
 
-            dispatch({type: ChatActionType.SEND_MESSAGE, payload: {id: doc.id, ...message}});
+            dispatch({type: ChatActionType.UPDATE_SELECTED_CONVERSATION_WITH_LAST_MESSAGE, payload: {id: doc.id, ...message}});
         } catch (e) {
             alert(e.message);
         }
