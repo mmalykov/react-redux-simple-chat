@@ -13,35 +13,31 @@ import {Conversation} from "../../types/conversation";
 import {User} from "../../../users/types/user";
 import {
     addDocumentToCollection,
-    fetchAllDocuments,
     fetchDocumentsByFieldValue,
     fetchDocumentsByIds,
     fetchDocumentsNotInIds,
     updateDocumentInCollection
 } from "../../../integrations";
 
-export const fetchConversations = (authId?: string) => {
+export const fetchConversations = (loadedConversations: Conversation[], authId?: string) => {
     return async (dispatch: Dispatch<ChatAction>) => {
         try {
             dispatch({type: ChatActionType.FETCH_CONVERSATIONS});
 
-            const conversationsSnapshot = await fetchAllDocuments('conversations');
-
-            const conversationIds = conversationsSnapshot.docs.map(doc => doc.id);
+            const conversationIds = loadedConversations.map(c => c.id);
             const messages = await fetchDocumentsByIds<Message>('messages', conversationIds, 'conversationId');
 
-            const participantsIds = [...new Set(conversationsSnapshot.docs.flatMap(doc => doc.data().participantsIds))];
+            const participantsIds = [...new Set(loadedConversations.flatMap(c => c.participantsIds))];
             const users = await fetchDocumentsByIds<User>('users', participantsIds);
 
-            const conversations = conversationsSnapshot.docs.map(doc => {
-                const data = doc.data();
+            const conversations = loadedConversations.map(conversation => {
                 const user = users.find(user => user.authId === authId);
-                const participants = users.filter(user => user.authId !== authId && data.participantsIds.includes(user.id));
-                const lastMessage = messages.find(message => message.id === data.lastMessageId);
+                const participants = users.filter(user => user.authId !== authId && conversation.participantsIds.includes(user.id));
+                const lastMessage = messages.find(message => message.id === conversation.lastMessageId);
 
                 return {
-                    ...data,
-                    id: doc.id,
+                    ...conversation,
+                    id: conversation.id,
                     user,
                     userId: user?.id,
                     participants,

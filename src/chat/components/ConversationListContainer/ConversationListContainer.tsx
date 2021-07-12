@@ -1,22 +1,18 @@
-import React, {useContext, useEffect} from "react";
+import React, {useContext} from "react";
 import {Grid} from "@material-ui/core";
 import {ConversationsList} from "../ConversationsList/ConversationsList";
 import {useSelector} from "react-redux";
 import {selectConversationsLoading} from "../../store/selectors";
 import {ConversationListSearch} from "../ConversationsList/ConversationListSearch/ConversationListSearch";
-import {useChatActions} from "../../store/hooks/useChatActions";
 import {FirebaseContext} from "../../../contexts/firebaseContext";
 import {useAuthState} from "react-firebase-hooks/auth";
+import {useConversations} from "../../hooks/useConversations";
 
 export const ConversationListContainer: React.FC = () => {
     const {auth} = useContext(FirebaseContext);
     const [user] = useAuthState(auth);
-    const {fetchConversations} = useChatActions();
+    useConversations(user);
     const {conversationsLoadingError, isConversationsLoading} = useSelector(selectConversationsLoading);
-
-    useEffect(() => {
-        fetchConversations(user?.uid);
-    }, [user]);
 
     return (
         <Grid item xs={3}>

@@ -66,18 +66,28 @@ export const updateDocumentInCollection = async <T>(collection: Collection, docu
         .update(updatedData);
 };
 
-export const onCollectionSnapshot = <T>(collection: Collection, fieldName: string, fieldValue: any, orderBy: OrderBy | null = null, callback: (models: T[]) => void) => {
+export const onCollectionSnapshot = <T>(collection: Collection, callback: (models: T[]) => void) => {
+    return firebase.firestore()
+        .collection(collection)
+        .onSnapshot(querySnapshot => {
+            const models = querySnapshot.docs.map(doc => docToModel<T>(doc));
+
+            callback(models);
+        }, (error) => console.error('onCollectionSnapshot', error));
+};
+
+export const onCollectionByFieldValueSnapshot = <T>(collection: Collection, fieldName: string, fieldValue: any, orderBy: OrderBy | null = null, callback: (models: T[]) => void) => {
     let collectionRef = firebase.firestore()
         .collection(collection)
         .where(fieldName, '==', fieldValue);
 
     if (orderBy) {
-        collectionRef = collectionRef.orderBy(orderBy.fieldPath, orderBy.directionStr)
+        collectionRef = collectionRef.orderBy(orderBy.fieldPath, orderBy.directionStr);
     }
 
-    collectionRef.onSnapshot(querySnapshot => {
+    return collectionRef.onSnapshot(querySnapshot => {
         const models = querySnapshot.docs.map(doc => docToModel<T>(doc));
 
         callback(models);
-    });
+    }, (error) => console.error('onCollectionSnapshot', error));
 };

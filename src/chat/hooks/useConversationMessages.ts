@@ -3,7 +3,7 @@ import {useEffect} from "react";
 import {useChatActions} from "../store/hooks/useChatActions";
 import {useSelector} from "react-redux";
 import {selectMessages} from "../store/selectors";
-import {onCollectionSnapshot} from "../../integrations";
+import {onCollectionByFieldValueSnapshot} from "../../integrations";
 import {Message} from "../types/message";
 
 export const useConversationMessages = (conversation: Conversation | null) => {
@@ -15,7 +15,7 @@ export const useConversationMessages = (conversation: Conversation | null) => {
             return;
         }
 
-        return onCollectionSnapshot<Message>(
+        return onCollectionByFieldValueSnapshot<Message>(
             'messages',
             'conversationId', conversation?.id,
             {fieldPath: 'createdAt', directionStr: 'desc'},
