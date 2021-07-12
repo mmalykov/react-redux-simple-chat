@@ -2,10 +2,10 @@ import React from "react";
 import {Grid, makeStyles} from "@material-ui/core";
 import {MessagesList} from "../MessagesList/MessagesList";
 import {AddMessage} from "../AddMessage/AddMessage";
-import {useChatActions} from "../../store/hooks/useChatActions";
 import {useSelector} from "react-redux";
 import {selectConversations, selectDraftMessages, selectMessagesLoading} from "../../store/selectors";
 import {useConversationMessages} from "../../hooks/useConversationMessages";
+import {useConversationsActions, useMessagesActions} from "../../store/hooks";
 
 const useConversationContainerStyles = makeStyles(() => ({
     root: {
@@ -17,9 +17,10 @@ const useConversationContainerStyles = makeStyles(() => ({
 export const ConversationContainer: React.FC = () => {
     const containerClasses = useConversationContainerStyles();
     const {selectedConversation} = useSelector(selectConversations);
-    const {selectConversationError} = useSelector(selectMessagesLoading);
+    const {fetchMessagesError} = useSelector(selectMessagesLoading);
     const {draftMessages} = useSelector(selectDraftMessages);
-    const {sendTextMessage, storeDraftTextMessage} = useChatActions();
+    const {sendTextMessage} = useConversationsActions();
+    const {storeDraftTextMessage} = useMessagesActions();
     const [messages] = useConversationMessages(selectedConversation);
     const messageContent = selectedConversation ?
         (draftMessages[selectedConversation.id] ?? '') :
@@ -28,7 +29,7 @@ export const ConversationContainer: React.FC = () => {
     if (!selectedConversation) {
         return (
             <Grid container alignItems="center" justifyContent="center" item xs={8}>
-                {selectConversationError ? selectConversationError : 'Please select the conversation'}
+                {fetchMessagesError ? fetchMessagesError : 'Please select the conversation'}
             </Grid>
         );
     }

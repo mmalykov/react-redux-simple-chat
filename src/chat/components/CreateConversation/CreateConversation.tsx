@@ -1,21 +1,23 @@
 import React, {useState} from "react";
+import {useSelector} from "react-redux";
 import {IconButton, Modal} from "@material-ui/core";
 import SendIcon from "@material-ui/icons/Send";
-import {User} from "../../../users/types/user";
 import {CreateConversationModalBody} from "./CreateConversationModalBody/CreateConversationModalBody";
 import {useUsersForNewConversation} from "../../hooks/useUsersForNewConversation";
-import {useChatActions} from "../../store/hooks/useChatActions";
-import {useSelector} from "react-redux";
+import {useConversationsActions, useMessagesActions} from "../../store/hooks";
 import {selectUser} from "../../../users/store/selectors";
+import {User} from "../../../users/types/user";
 
 export const CreateConversation: React.FC = () => {
     const [open, setOpen] = useState(false);
     const users = useUsersForNewConversation(open);
     const currentUser = useSelector(selectUser);
-    const {createConversation: createConversationAction} = useChatActions();
+    const {createConversation: createConversationAction} = useConversationsActions();
+    const {clearConversationMessages} = useMessagesActions();
 
     const createConversation = (user: User | null) => {
         createConversationAction(user, currentUser);
+        clearConversationMessages();
         handleClose();
     }
 

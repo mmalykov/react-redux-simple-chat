@@ -1,13 +1,13 @@
-import {Conversation} from "../types/conversation";
 import {useEffect} from "react";
-import {useChatActions} from "../store/hooks/useChatActions";
 import {useSelector} from "react-redux";
+import {Conversation} from "../types/conversation";
+import {Message} from "../types/message";
+import {useMessagesActions} from "../store/hooks";
 import {selectMessages} from "../store/selectors";
 import {onCollectionByFieldValueSnapshot} from "../../integrations";
-import {Message} from "../types/message";
 
 export const useConversationMessages = (conversation: Conversation | null) => {
-    const {fetchConversationMessagesSuccessful} = useChatActions();
+    const {fetchConversationMessagesSuccessful} = useMessagesActions();
     const {messages} = useSelector(selectMessages);
 
     useEffect(() => {

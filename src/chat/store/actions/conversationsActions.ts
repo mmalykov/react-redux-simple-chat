@@ -1,28 +1,25 @@
+import {Conversation} from "../../types/conversation";
 import {Dispatch} from "redux";
 import {
     AddNewConversationAction,
-    ChatAction,
-    ChatActionType,
-    ClearConversationMessagesAction,
-    FetchConversationMessagesSuccessfulAction,
+    ConversationsAction,
+    ConversationsActionType,
     FilterConversationsAction,
     SelectConversationAction
-} from "../types/store";
-import {Message, MessageType} from "../../types/message";
-import {Conversation} from "../../types/conversation";
-import {User} from "../../../users/types/user";
+} from "../types";
 import {
     addDocumentToCollection,
-    fetchDocumentsByFieldValue,
     fetchDocumentsByIds,
     fetchDocumentsNotInIds,
     updateDocumentInCollection
 } from "../../../integrations";
+import {Message, MessageType} from "../../types/message";
+import {User} from "../../../users/types/user";
 
 export const fetchConversations = (loadedConversations: Conversation[], authId?: string) => {
-    return async (dispatch: Dispatch<ChatAction>) => {
+    return async (dispatch: Dispatch<ConversationsAction>) => {
         try {
-            dispatch({type: ChatActionType.FETCH_CONVERSATIONS});
+            dispatch({type: ConversationsActionType.FETCH_CONVERSATIONS});
 
             const conversationIds = loadedConversations.map(c => c.id);
             const messages = await fetchDocumentsByIds<Message>('messages', conversationIds, 'conversationId');
@@ -45,41 +42,18 @@ export const fetchConversations = (loadedConversations: Conversation[], authId?:
                 };
             }) as Conversation[];
 
-            dispatch({type: ChatActionType.FETCH_CONVERSATIONS_SUCCESSFUL, payload: conversations})
+            dispatch({type: ConversationsActionType.FETCH_CONVERSATIONS_SUCCESSFUL, payload: conversations})
         } catch (e) {
             dispatch({
-                type: ChatActionType.FETCH_CONVERSATIONS_ERROR,
+                type: ConversationsActionType.FETCH_CONVERSATIONS_ERROR,
                 payload: e.message,
             });
         }
     }
 };
 
-export const fetchConversationMessagesSuccessful = (messages: Message[]): FetchConversationMessagesSuccessfulAction => (
-    {type: ChatActionType.FETCH_CONVERSATION_MESSAGES_SUCCESSFUL, payload: messages}
-);
-
-export const fetchConversationMessages = (conversationId: string) => {
-    return async (dispatch: Dispatch<ChatAction>) => {
-        try {
-            const messages = await fetchDocumentsByFieldValue<Message>(
-                'messages',
-                'conversationId',
-                conversationId,
-                {fieldPath: 'createdAt', directionStr: 'desc'}
-            );
-
-            dispatch(fetchConversationMessagesSuccessful(messages));
-        } catch (e) {
-            dispatch({type: ChatActionType.FETCH_CONVERSATION_MESSAGES_ERROR, payload: e.message});
-        }
-    };
-};
-
-export const clearConversationMessages = (): ClearConversationMessagesAction => ({type: ChatActionType.CLEAR_CONVERSATION_MESSAGES});
-
 export const sendTextMessage = (content: string, conversationId: string, userId: string) => {
-    return async (dispatch: Dispatch<ChatAction>) => {
+    return async (dispatch: Dispatch<ConversationsAction>) => {
         try {
             const messageModel = {
                 content,
@@ -94,7 +68,7 @@ export const sendTextMessage = (content: string, conversationId: string, userId:
             await updateDocumentInCollection('conversations', conversationId, {lastMessageId: message.id});
 
             dispatch({
-                type: ChatActionType.UPDATE_SELECTED_CONVERSATION_WITH_LAST_MESSAGE,
+                type: ConversationsActionType.UPDATE_SELECTED_CONVERSATION_WITH_LAST_MESSAGE,
                 payload: message
             });
         } catch (e) {
@@ -104,27 +78,22 @@ export const sendTextMessage = (content: string, conversationId: string, userId:
 };
 
 export const selectConversation = (conversationId: string): SelectConversationAction => ({
-    type: ChatActionType.SELECT_CONVERSATION,
+    type: ConversationsActionType.SELECT_CONVERSATION,
     payload: conversationId
 });
 
 export const addNewConversation = (conversation: Conversation): AddNewConversationAction => ({
-    type: ChatActionType.ADD_NEW_CONVERSATION,
+    type: ConversationsActionType.ADD_NEW_CONVERSATION,
     payload: conversation
 });
 
-export const storeDraftTextMessage = (conversationId: string, content: string) => ({
-    type: ChatActionType.STORE_DRAFT_MESSAGE,
-    payload: {conversationId, content},
-});
-
 export const filterConversations = (query: string): FilterConversationsAction => ({
-    type: ChatActionType.FILTER_CONVERSATIONS,
+    type: ConversationsActionType.FILTER_CONVERSATIONS,
     payload: query
 });
 
 export const createConversation = (user: User | null, currentUser: User | null) => {
-    return async (dispatch: Dispatch<ChatAction>) => {
+    return async (dispatch: Dispatch<ConversationsAction>) => {
         const participantsIds = [user?.id, currentUser?.id] as string[];
         const participants = await fetchDocumentsByIds<User>('users', participantsIds);
 
@@ -138,11 +107,10 @@ export const createConversation = (user: User | null, currentUser: User | null) 
 
         await dispatch(addNewConversation(conversation));
         await dispatch(selectConversation(conversation.id));
-        await dispatch(clearConversationMessages());
     };
 };
 
-// TODO: refactor move to appropriate file, use userId insted of authId
+// TODO: refactor move to appropriate file, use userId instead of authId
 export const fetchUsersForNewConversation = async (conversations: Conversation[], authId: string = ''): Promise<User[]> => {
     try {
         const existedParticipantsIds = conversations.reduce((participantsIds: string[], conversation) => {
