@@ -17,7 +17,7 @@ type Props = {
 
 export const ConversationListItem: React.FC<Props> = ({conversation, selectConversation, draftMessage}) => {
     const {id, lastMessage, participants} = conversation;
-    const participantsNames = participants.map(p => p.name).join(' ');
+    const participantsNames = participants.map(p => p.fullName).join(' ');
     const handleClick = () => selectConversation(id);
     const secondaryContent = draftMessage || lastMessage.content;
     const secondary = draftMessage ?
@@ -40,8 +40,8 @@ export const ConversationListItem: React.FC<Props> = ({conversation, selectConve
                 <AvatarGroup max={3}>
                     {participants.map(participant => {
                         return (
-                            <Avatar key={participant.id} alt={participant?.name} src={participant?.avatarUrl}>
-                                {buildAvatarText(participant?.name)}
+                            <Avatar key={participant.id} alt={participant?.fullName} src={participant?.avatarUrl}>
+                                {buildAvatarText(participant?.fullName)}
                             </Avatar>
                         );
                     })}

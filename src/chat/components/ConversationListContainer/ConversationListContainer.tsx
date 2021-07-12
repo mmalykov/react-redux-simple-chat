@@ -9,7 +9,6 @@ import {selectConversations, selectConversationsLoading, selectDraftMessages} fr
 
 export const ConversationListContainer: React.FC = () => {
     const {conversations, filteredConversations} = useSelector(selectConversations);
-    console.info(conversations, filteredConversations)
     const {conversationsLoadingError, isConversationsLoading} = useSelector(selectConversationsLoading);
     const {draftMessages} = useSelector(selectDraftMessages);
     const {filterConversations} = useChatActions();

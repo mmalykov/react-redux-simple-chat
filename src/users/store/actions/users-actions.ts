@@ -12,7 +12,7 @@ export const registerUser = (email: string, password: string, history: h.History
             const {user} = await firebaseContextValue.auth.createUserWithEmailAndPassword(email, password);
             const userPayload: User = {
                 id: user?.uid as string,
-                name: user?.displayName as string,
+                fullName: user?.displayName as string,
                 email: user?.email as string,
                 avatarUrl: user?.photoURL as string
             }
@@ -32,7 +32,7 @@ export const loginUser = (email: string, password: string, history: h.History) =
             const {user} = await firebaseContextValue.auth.signInWithEmailAndPassword(email, password);
             const userPayload: User = {
                 id: user?.uid as string,
-                name: user?.displayName as string,
+                fullName: user?.displayName as string,
                 email: user?.email as string,
                 avatarUrl: user?.photoURL as string
             }

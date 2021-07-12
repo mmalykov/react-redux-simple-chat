@@ -1,3 +1,4 @@
+import {Dispatch} from "redux";
 import {
     ChatAction,
     ChatActionType,
@@ -5,21 +6,49 @@ import {
     SelectConversationAction,
     SendMessageAction
 } from "../types/store";
-import {MessageType} from "../../types/message";
-import {Dispatch} from "redux";
-import {conversations} from "../../../testData";
+import {Message, MessageType} from "../../types/message";
+import {Conversation} from "../../types/conversation";
+import {firebaseContextValue} from "../../../contexts/firebase-context";
+import {User} from "../../../users/types/user";
 
 export const fetchConversations = () => {
     return async (dispatch: Dispatch<ChatAction>) => {
         try {
             dispatch({type: ChatActionType.FETCH_CONVERSATIONS});
-            setTimeout(() => {
-                dispatch({type: ChatActionType.FETCH_CONVERSATIONS_SUCCESSFUL, payload: conversations})
-            }, 500)
+
+            const conversationsSnapshot = await firebaseContextValue.firestore
+                .collection('conversations')
+                .get();
+            // TODO: optimize query to not load all messages
+            const messagesSnapshot = await firebaseContextValue.firestore
+                .collection('messages')
+                .get();
+            const usersSnapshot = await firebaseContextValue.firestore
+                .collection('users')
+                .get();
+
+            const conversations = conversationsSnapshot.docs.map(doc => {
+                const data = doc.data();
+
+                const participantsDocs = usersSnapshot.docs.filter(doc => data.participantsIds.includes(doc.id));
+                const participants = participantsDocs.map(doc => ({id: doc?.id, ...doc.data()}) as User);
+
+                const lastMessageDoc = messagesSnapshot.docs.find(doc => doc.id === data.lastMessageId);
+                const lastMessage = {id: lastMessageDoc?.id, ...lastMessageDoc?.data()} as Message;
+
+                return {
+                    ...data,
+                    id: doc.id,
+                    participants,
+                    lastMessage,
+                };
+            }) as Conversation[];
+
+            dispatch({type: ChatActionType.FETCH_CONVERSATIONS_SUCCESSFUL, payload: conversations})
         } catch (e) {
             dispatch({
                 type: ChatActionType.FETCH_CONVERSATIONS_ERROR,
-                payload: `Error during loading conversations`,
+                payload: e.message,
             });
         }
     }

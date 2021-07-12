@@ -16,7 +16,6 @@ const useConversationContainerStyles = makeStyles(() => ({
 export const ConversationContainer: React.FC = () => {
     const containerClasses = useConversationContainerStyles();
     const {selectedConversation} = useSelector(selectConversations);
-    console.info(selectedConversation)
     const {draftMessages} = useSelector(selectDraftMessages);
     const messageContent = selectedConversation ?
         (draftMessages[selectedConversation.id] ?? '') :

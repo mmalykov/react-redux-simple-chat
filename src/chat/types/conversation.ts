@@ -5,7 +5,9 @@ export interface Conversation {
     id: string;
     userId: string;
     user: User;
+    participantsIds: string[];
     participants: User[];
+    lastMessageId: string;
     lastMessage: Message;
     messages: Message[];
 }

@@ -58,7 +58,7 @@ export const chatReducer = (state = initialState, action: ChatAction): ChatState
                 ...state,
                 filteredConversations: state.conversations.filter(
                     conversation => {
-                        const participantsNames = conversation.participants.map(p => p.name?.toLowerCase()).join(' ');
+                        const participantsNames = conversation.participants.map(p => p.fullName?.toLowerCase()).join(' ');
 
                         return participantsNames.includes(action.payload.toLowerCase())
                     }
