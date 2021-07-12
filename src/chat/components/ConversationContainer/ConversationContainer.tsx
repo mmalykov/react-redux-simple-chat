@@ -1,11 +1,11 @@
-import React, {useEffect} from "react";
+import React from "react";
 import {Grid, makeStyles} from "@material-ui/core";
 import {MessagesList} from "../MessagesList/MessagesList";
 import {AddMessage} from "../AddMessage/AddMessage";
 import {useChatActions} from "../../store/hooks/useChatActions";
 import {useSelector} from "react-redux";
-import {selectConversations, selectDraftMessages, selectMessages, selectMessagesLoading} from "../../store/selectors";
-import {useConversationMessagesSnapshot} from "../../hooks/useConversationMessagesSnapshot";
+import {selectConversations, selectDraftMessages, selectMessagesLoading} from "../../store/selectors";
+import {useConversationMessages} from "../../hooks/useConversationMessages";
 
 const useConversationContainerStyles = makeStyles(() => ({
     root: {
@@ -17,18 +17,13 @@ const useConversationContainerStyles = makeStyles(() => ({
 export const ConversationContainer: React.FC = () => {
     const containerClasses = useConversationContainerStyles();
     const {selectedConversation} = useSelector(selectConversations);
-    const {messages} = useSelector(selectMessages);
     const {selectConversationError} = useSelector(selectMessagesLoading);
     const {draftMessages} = useSelector(selectDraftMessages);
-    const {fetchConversationMessagesSuccessful, sendTextMessage, storeDraftTextMessage} = useChatActions();
-    const messagesSnapshot = useConversationMessagesSnapshot(selectedConversation);
+    const {sendTextMessage, storeDraftTextMessage} = useChatActions();
+    const [messages] = useConversationMessages(selectedConversation);
     const messageContent = selectedConversation ?
         (draftMessages[selectedConversation.id] ?? '') :
         '';
-
-    useEffect(() => {
-        fetchConversationMessagesSuccessful(messagesSnapshot);
-    }, [messagesSnapshot]);
 
     if (!selectedConversation) {
         return (
