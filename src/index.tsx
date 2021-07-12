@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import reportWebVitals from './reportWebVitals';
 import {CssBaseline} from "@material-ui/core";
-import {FirebaseContext, firebaseContextValue} from './contexts/firebase-context';
+import {FirebaseContext, firebaseContextValue} from './contexts/firebaseContext';
 import {Provider} from "react-redux";
 import {store} from "./store";
 import App from './App';

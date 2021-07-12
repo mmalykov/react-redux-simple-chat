@@ -3,7 +3,7 @@ import {Grid, makeStyles, Paper} from "@material-ui/core";
 import {ConversationContainer} from "../ConversationContainer/ConversationContainer";
 import {ConversationListContainer} from "../ConversationListContainer/ConversationListContainer";
 import {useChatActions} from "../../store/hooks/useChatActions";
-import {FirebaseContext} from "../../../contexts/firebase-context";
+import {FirebaseContext} from "../../../contexts/firebaseContext";
 import {useAuthState} from "react-firebase-hooks/auth";
 import {useUsersActions} from "../../../users/store";
 

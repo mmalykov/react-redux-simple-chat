@@ -1,6 +1,6 @@
 import {useContext, useEffect, useState} from "react";
 import {fetchUsersForNewConversation} from "../store/actions";
-import {FirebaseContext} from "../../contexts/firebase-context";
+import {FirebaseContext} from "../../contexts/firebaseContext";
 import {useAuthState} from "react-firebase-hooks/auth";
 import {useSelector} from "react-redux";
 import {selectConversations} from "../store/selectors";

@@ -1,1 +1,1 @@
-export * from './firebase/collection-handlers';
+export * from './firebase/collectionHandlers';

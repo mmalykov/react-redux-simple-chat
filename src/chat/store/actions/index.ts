@@ -1,1 +1,1 @@
-export * from './chat-actions';
+export * from './chatActions';

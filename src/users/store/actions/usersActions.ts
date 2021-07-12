@@ -1,6 +1,6 @@
 import {Dispatch} from "redux";
 import {UsersAction, UsersActionType} from "../types/store";
-import {firebaseContextValue} from "../../../contexts/firebase-context";
+import {firebaseContextValue} from "../../../contexts/firebaseContext";
 import {User} from "../../types/user";
 import * as h from 'history';
 import {paths} from "../../../routes";
