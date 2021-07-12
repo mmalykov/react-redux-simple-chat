@@ -47,7 +47,7 @@ export interface FetchConversationMessagesErrorAction {
     payload: string;
 }
 
-export interface SendMessageAction {
+export interface UpdateSelectedConversationWithLastMessageAction {
     type: ChatActionType.UPDATE_SELECTED_CONVERSATION_WITH_LAST_MESSAGE;
     payload: Message;
 }
@@ -65,7 +65,7 @@ export interface StoreDraftMessageAction {
     };
 }
 
-export interface FilterConversationMessageAction {
+export interface FilterConversationsAction {
     type: ChatActionType.FILTER_CONVERSATIONS;
     payload: string;
 }
@@ -75,7 +75,7 @@ export type ChatAction =
     FetchConversationsErrorAction |
     FetchConversationMessagesSuccessfulAction |
     FetchConversationMessagesErrorAction |
-    SendMessageAction |
+    UpdateSelectedConversationWithLastMessageAction |
     SelectConversationAction |
     StoreDraftMessageAction |
-    FilterConversationMessageAction;
+    FilterConversationsAction;

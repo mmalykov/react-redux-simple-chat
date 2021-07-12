@@ -3,7 +3,7 @@ import {
     ChatAction,
     ChatActionType,
     FetchConversationMessagesSuccessfulAction,
-    FilterConversationMessageAction,
+    FilterConversationsAction,
     SelectConversationAction
 } from "../types/store";
 import {Message, MessageType} from "../../types/message";
@@ -118,7 +118,7 @@ export const storeDraftTextMessage = (conversationId: string, content: string) =
     payload: {conversationId, content},
 });
 
-export const filterConversations = (query: string): FilterConversationMessageAction => ({
+export const filterConversations = (query: string): FilterConversationsAction => ({
     type: ChatActionType.FILTER_CONVERSATIONS,
     payload: query
 });
