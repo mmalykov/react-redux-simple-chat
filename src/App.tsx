@@ -9,11 +9,6 @@ const useStyles = makeStyles(() => ({
         display: 'flex',
         flexDirection: 'column',
         height: '100vh',
-    },
-    chat: {
-        display: 'flex',
-        flex: `1 0 100%`,
-        maxHeight: `calc(100% - 64px)`,
     }
 }));
 

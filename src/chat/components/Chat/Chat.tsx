@@ -9,6 +9,7 @@ import {useAuthState} from "react-firebase-hooks/auth";
 const useStyles = makeStyles(() => ({
     root: {
         height: '100%',
+        maxHeight: `calc(100% - 64px)`, // TODO: refactor to responsive height (not depend on parent layout)
     }
 }));
 
