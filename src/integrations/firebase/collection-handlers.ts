@@ -1,5 +1,5 @@
 import firebase from "firebase";
-import {docToModel} from "../../chat/store/helpers";
+import {docToModel} from "./helpers";
 
 const FieldPath = firebase.firestore.FieldPath;
 
