@@ -1,7 +1,6 @@
 import React, {useState} from "react";
 import {
     AppBar as MaterialAppBar,
-    Badge,
     IconButton,
     makeStyles,
     Menu,
@@ -11,8 +10,6 @@ import {
     Typography
 } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
-import MailIcon from "@material-ui/icons/Mail";
-import NotificationsIcon from "@material-ui/icons/Notifications";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import MoreIcon from "@material-ui/icons/More";
 import {CreateConversation} from "../../chat/components/CreateConversation/CreateConversation";
@@ -80,7 +77,6 @@ export const AppBar: React.FC = () => {
             open={isMenuOpen}
             onClose={handleMenuClose}
         >
-            <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
             <MenuItem onClick={handleMenuClose}>My account</MenuItem>
         </Menu>
     );
@@ -96,22 +92,6 @@ export const AppBar: React.FC = () => {
             open={isMobileMenuOpen}
             onClose={handleMobileMenuClose}
         >
-            <MenuItem>
-                <IconButton aria-label="show 4 new mails" color="inherit">
-                    <Badge badgeContent={4} color="secondary">
-                        <MailIcon/>
-                    </Badge>
-                </IconButton>
-                <p>Messages</p>
-            </MenuItem>
-            <MenuItem>
-                <IconButton aria-label="show 11 new notifications" color="inherit">
-                    <Badge badgeContent={11} color="secondary">
-                        <NotificationsIcon/>
-                    </Badge>
-                </IconButton>
-                <p>Notifications</p>
-            </MenuItem>
             <MenuItem onClick={handleProfileMenuOpen}>
                 <IconButton
                     aria-label="account of current user"
@@ -121,7 +101,7 @@ export const AppBar: React.FC = () => {
                 >
                     <AccountCircle/>
                 </IconButton>
-                <p>Profile</p>
+                <p>My account</p>
             </MenuItem>
         </Menu>
     );
@@ -139,16 +119,11 @@ export const AppBar: React.FC = () => {
                         <MenuIcon/>
                     </IconButton>
                     <Typography className={classes.title} variant="h6" noWrap>
-                        Material-UI
+                        My lovely chat
                     </Typography>
                     <div className={classes.grow}/>
                     <div className={classes.sectionDesktop}>
                         <CreateConversation />
-                        <IconButton aria-label="show 17 new notifications" color="inherit">
-                            <Badge badgeContent={17} color="secondary">
-                                <NotificationsIcon/>
-                            </Badge>
-                        </IconButton>
                         <IconButton
                             edge="end"
                             aria-label="account of current user"

@@ -21,12 +21,17 @@ export const fetchConversations = (authId?: string) => {
             const conversationsSnapshot = await firebaseContextValue.firestore
                 .collection('conversations')
                 .get();
-            // TODO: optimize query to not load all messages
+
+            const conversationIds = conversationsSnapshot.docs.map(doc => doc.id);
             const messagesSnapshot = await firebaseContextValue.firestore
                 .collection('messages')
+                .where('conversationId', 'in', conversationIds)
                 .get();
+
+            const participantsIds = [...new Set(conversationsSnapshot.docs.flatMap(doc => doc.data().participantsIds))];
             const usersSnapshot = await firebaseContextValue.firestore
                 .collection('users')
+                .where(firebase.firestore.FieldPath.documentId(), 'in', participantsIds)
                 .get();
 
             const conversations = conversationsSnapshot.docs.map(doc => {
@@ -147,12 +152,16 @@ export const createConversation = (user: User | null, currentUser: User | null) 
 
         const usersSnapshot = await firebaseContextValue.firestore
             .collection('users')
-            .where('id', 'in', participantsIds)
+            .where(firebase.firestore.FieldPath.documentId(), 'in', participantsIds)
             .get();
         const participants = usersSnapshot.docs.map(doc => docToModel<User>(doc));
 
         const doc = await docRef.get();
-        const conversation = docToModel<Conversation>(doc, {user: currentUser as User, participants});
+        const conversation = docToModel<Conversation>(doc, {
+            userId: currentUser?.id,
+            user: currentUser as User,
+            participants: participants.filter(p => p.id !== currentUser?.id)
+        });
 
         await dispatch(addNewConversation(conversation));
         await dispatch(selectConversation(conversation.id));
@@ -175,9 +184,10 @@ export const fetchUsersForNewConversation = async (conversations: Conversation[]
 
         const querySnapshot = await firebaseContextValue.firestore
             .collection('users')
+            .where(firebase.firestore.FieldPath.documentId(), 'not-in', excludeParticipantsIds)
             .get();
 
-        return querySnapshot.docs.filter(doc => !excludeParticipantsIds.includes(doc.id)).map(doc => docToModel<User>(doc));
+        return querySnapshot.docs.map(doc => docToModel<User>(doc));
     } catch (e) {
         return [];
     }
