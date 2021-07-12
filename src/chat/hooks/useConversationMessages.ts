@@ -1,16 +1,12 @@
 import {Conversation} from "../types/conversation";
-import {useContext, useEffect, useState} from "react";
-import {FirebaseContext} from "../../contexts/firebase-context";
-import firebase from "firebase";
+import {useEffect} from "react";
 import {useChatActions} from "../store/hooks/useChatActions";
 import {useSelector} from "react-redux";
 import {selectMessages} from "../store/selectors";
-
-type Snapshot = firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>;
+import {onCollectionSnapshot} from "../../integrations";
+import {Message} from "../types/message";
 
 export const useConversationMessages = (conversation: Conversation | null) => {
-    const {firestore} = useContext(FirebaseContext);
-    const [messagesSnapshot, setMessagesSnapshot] = useState<Snapshot[]>([]);
     const {fetchConversationMessagesSuccessful} = useChatActions();
     const {messages} = useSelector(selectMessages);
 
@@ -19,18 +15,13 @@ export const useConversationMessages = (conversation: Conversation | null) => {
             return;
         }
 
-        return firestore
-            .collection('messages')
-            .where('conversationId', '==', conversation?.id)
-            .orderBy('createdAt', 'desc')
-            .onSnapshot(querySnapshot => {
-                setMessagesSnapshot(querySnapshot.docs);
-            });
-    }, [firestore, conversation]);
-
-    useEffect(() => {
-        fetchConversationMessagesSuccessful(messagesSnapshot);
-    }, [messagesSnapshot]);
+        return onCollectionSnapshot<Message>(
+            'messages',
+            'conversationId', conversation?.id,
+            {fieldPath: 'createdAt', directionStr: 'desc'},
+            fetchConversationMessagesSuccessful
+        );
+    }, [conversation]);
 
     return [messages];
 };

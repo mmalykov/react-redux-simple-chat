@@ -11,8 +11,6 @@ import {
 import {Message, MessageType} from "../../types/message";
 import {Conversation} from "../../types/conversation";
 import {User} from "../../../users/types/user";
-import {docToModel} from "../helpers";
-import firebase from "firebase";
 import {
     addDocumentToCollection,
     fetchAllDocuments,
@@ -28,28 +26,22 @@ export const fetchConversations = (authId?: string) => {
             const conversationsSnapshot = await fetchAllDocuments('conversations');
 
             const conversationIds = conversationsSnapshot.docs.map(doc => doc.id);
-            const messagesSnapshot = await fetchDocumentsByIds('messages', conversationIds, 'conversationId');
+            const messages = await fetchDocumentsByIds<Message>('messages', conversationIds, 'conversationId');
 
             const participantsIds = [...new Set(conversationsSnapshot.docs.flatMap(doc => doc.data().participantsIds))];
-            const usersSnapshot = await fetchDocumentsByIds('users', participantsIds);
+            const users = await fetchDocumentsByIds<User>('users', participantsIds);
 
             const conversations = conversationsSnapshot.docs.map(doc => {
                 const data = doc.data();
-
-                const userDoc = usersSnapshot.docs.find(doc => doc.data().authId === authId);
-                const user = docToModel<User>(userDoc);
-
-                const participantsDocs = usersSnapshot.docs.filter(doc => doc.data().authId !== authId && data.participantsIds.includes(doc.id));
-                const participants = participantsDocs.map(doc => docToModel<User>(doc));
-
-                const lastMessageDoc = messagesSnapshot.docs.find(doc => doc.id === data.lastMessageId);
-                const lastMessage = docToModel<Message>(lastMessageDoc);
+                const user = users.find(user => user.authId === authId);
+                const participants = users.filter(user => user.authId !== authId && data.participantsIds.includes(user.id));
+                const lastMessage = messages.find(message => message.id === data.lastMessageId);
 
                 return {
                     ...data,
                     id: doc.id,
                     user,
-                    userId: user.id,
+                    userId: user?.id,
                     participants,
                     lastMessage,
                 };
@@ -65,23 +57,21 @@ export const fetchConversations = (authId?: string) => {
     }
 };
 
-export const fetchConversationMessagesSuccessful = (docs: firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>[]): FetchConversationMessagesSuccessfulAction => {
-    const messages = docs.map(doc => docToModel<Message>(doc))
-
-    return {type: ChatActionType.FETCH_CONVERSATION_MESSAGES_SUCCESSFUL, payload: messages};
-};
+export const fetchConversationMessagesSuccessful = (messages: Message[]): FetchConversationMessagesSuccessfulAction => (
+    {type: ChatActionType.FETCH_CONVERSATION_MESSAGES_SUCCESSFUL, payload: messages}
+);
 
 export const fetchConversationMessages = (conversationId: string) => {
     return async (dispatch: Dispatch<ChatAction>) => {
         try {
-            const messagesSnapshot = await fetchDocumentsByFieldValue(
+            const messages = await fetchDocumentsByFieldValue<Message>(
                 'messages',
                 'conversationId',
                 conversationId,
                 {fieldPath: 'createdAt', directionStr: 'desc'}
             );
 
-            dispatch(fetchConversationMessagesSuccessful(messagesSnapshot.docs));
+            dispatch(fetchConversationMessagesSuccessful(messages));
         } catch (e) {
             dispatch({type: ChatActionType.FETCH_CONVERSATION_MESSAGES_ERROR, payload: e.message});
         }
@@ -93,7 +83,7 @@ export const clearConversationMessages = (): ClearConversationMessagesAction => 
 export const sendTextMessage = (content: string, conversationId: string, userId: string) => {
     return async (dispatch: Dispatch<ChatAction>) => {
         try {
-            const message = {
+            const messageModel = {
                 content,
                 conversationId,
                 userId,
@@ -102,12 +92,12 @@ export const sendTextMessage = (content: string, conversationId: string, userId:
                 editedAt: Date.now(),
             } as Message;
 
-            const doc = await addDocumentToCollection('messages', message);
-            await updateDocumentInCollection('conversations', conversationId, {lastMessageId: doc.id});
+            const message = await addDocumentToCollection<Message>('messages', messageModel);
+            await updateDocumentInCollection('conversations', conversationId, {lastMessageId: message.id});
 
             dispatch({
                 type: ChatActionType.UPDATE_SELECTED_CONVERSATION_WITH_LAST_MESSAGE,
-                payload: {id: doc.id, ...message}
+                payload: message
             });
         } catch (e) {
             alert(e.message);
@@ -138,17 +128,15 @@ export const filterConversations = (query: string): FilterConversationsAction =>
 export const createConversation = (user: User | null, currentUser: User | null) => {
     return async (dispatch: Dispatch<ChatAction>) => {
         const participantsIds = [user?.id, currentUser?.id] as string[];
-        const docRef = await addDocumentToCollection('conversations', {participantsIds, lastMessageId: ''});
+        const participants = await fetchDocumentsByIds<User>('users', participantsIds);
 
-        const usersSnapshot = await fetchDocumentsByIds('users', participantsIds);
-        const participants = usersSnapshot.docs.map(doc => docToModel<User>(doc));
-
-        const doc = await docRef.get();
-        const conversation = docToModel<Conversation>(doc, {
+        const documentModel = {participantsIds, lastMessageId: ''};
+        const overrides = {
             userId: currentUser?.id,
             user: currentUser as User,
             participants: participants.filter(p => p.id !== currentUser?.id)
-        });
+        };
+        const conversation = await addDocumentToCollection<Conversation>('conversations', documentModel, overrides);
 
         await dispatch(addNewConversation(conversation));
         await dispatch(selectConversation(conversation.id));
@@ -169,9 +157,7 @@ export const fetchUsersForNewConversation = async (conversations: Conversation[]
         }, []);
         const excludeParticipantsIds = [conversations[0].userId, ...existedParticipantsIds];
 
-        const querySnapshot = await fetchDocumentsNotInIds('users', excludeParticipantsIds);
-
-        return querySnapshot.docs.map(doc => docToModel<User>(doc));
+        return await fetchDocumentsNotInIds<User>('users', excludeParticipantsIds);
     } catch (e) {
         return [];
     }
