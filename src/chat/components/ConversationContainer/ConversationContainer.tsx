@@ -2,8 +2,9 @@ import React from "react";
 import {Grid, makeStyles} from "@material-ui/core";
 import {MessagesList} from "../MessagesList/MessagesList";
 import {AddMessage} from "../AddMessage/AddMessage";
-import {useTypedSelector} from "../../../store/hooks/useTypedSelector";
 import {useChatActions} from "../../store/hooks/useChatActions";
+import {useSelector} from "react-redux";
+import {selectConversations, selectDraftMessages} from "../../store/selectors";
 
 const useConversationContainerStyles = makeStyles(() => ({
     root: {
@@ -14,7 +15,9 @@ const useConversationContainerStyles = makeStyles(() => ({
 
 export const ConversationContainer: React.FC = () => {
     const containerClasses = useConversationContainerStyles();
-    const {selectedConversation, draftMessages} = useTypedSelector(state => state.chat);
+    const {selectedConversation} = useSelector(selectConversations);
+    console.info(selectedConversation)
+    const {draftMessages} = useSelector(selectDraftMessages);
     const messageContent = selectedConversation ?
         (draftMessages[selectedConversation.id] ?? '') :
         '';

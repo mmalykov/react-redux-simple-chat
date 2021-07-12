@@ -1,19 +1,17 @@
 import React from "react";
 import {Grid} from "@material-ui/core";
 import {ConversationsList} from "../ConversationsList/ConversationsList";
-import {useTypedSelector} from "../../../store/hooks/useTypedSelector";
 import debounce from "@material-ui/core/utils/debounce";
 import {useChatActions} from "../../store/hooks/useChatActions";
 import {SearchTextField} from "../SearchTextField/SearchTextField";
+import {useSelector} from "react-redux";
+import {selectConversations, selectConversationsLoading, selectDraftMessages} from "../../store/selectors";
 
 export const ConversationListContainer: React.FC = () => {
-    const {
-        conversations,
-        filteredConversations,
-        conversationsLoadingError,
-        isConversationsLoading,
-        draftMessages,
-    } = useTypedSelector(state => state.chat);
+    const {conversations, filteredConversations} = useSelector(selectConversations);
+    console.info(conversations, filteredConversations)
+    const {conversationsLoadingError, isConversationsLoading} = useSelector(selectConversationsLoading);
+    const {draftMessages} = useSelector(selectDraftMessages);
     const {filterConversations} = useChatActions();
     const filterConversationsDebounced = debounce(filterConversations, 500);
 

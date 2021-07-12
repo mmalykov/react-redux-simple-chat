@@ -80,5 +80,3 @@ function replaceConversation(conversations: Conversation[], conversationId: stri
 
     return updatedConversations;
 }
-
-export type RootState = ReturnType<typeof chatReducer>
