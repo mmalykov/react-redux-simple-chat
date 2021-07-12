@@ -20,10 +20,10 @@ export const MessageListItem: React.FC<Props> = ({message, user, isOwn = false, 
     const classes = useStyles();
     const appliedClasses = isOwn ? classes.root : '';
     const secondaryText = useMemo(() => {
-        const date = new Date(message.timestamp);
+        const date = new Date(message.createdAt);
 
         return [date.getHours(), date.getMinutes(), date.getSeconds()].join(':')
-    }, [message.timestamp]);
+    }, [message.createdAt]);
 
     return (
         <ListItemText

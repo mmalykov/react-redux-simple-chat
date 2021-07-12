@@ -46,8 +46,10 @@ export const ConversationListItem: React.FC<Props> = ({conversation, selectConve
                     })}
                 </AvatarGroup>
             </ListItemIcon>
-            <ListItemText primary={participantsNames} secondary={secondaryNode}
-                          secondaryTypographyProps={{noWrap: true}}/>
+            <ListItemText
+                primary={participantsNames}
+                secondary={secondaryNode}
+                secondaryTypographyProps={{noWrap: true}}/>
         </ListItem>
     );
 };

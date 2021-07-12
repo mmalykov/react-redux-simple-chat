@@ -19,9 +19,10 @@ export interface ChatState {
 export enum ChatActionType {
     FETCH_CONVERSATIONS_SUCCESSFUL = 'FETCH_CONVERSATIONS_SUCCESSFUL',
     FETCH_CONVERSATIONS_ERROR = 'FETCH_CONVERSATIONS_ERROR',
-    SELECT_CONVERSATION_SUCCESSFUL = 'SELECT_CONVERSATION_SUCCESSFUL',
-    SELECT_CONVERSATION_ERROR = 'SELECT_CONVERSATION_ERROR',
+    FETCH_CONVERSATION_MESSAGES_SUCCESSFUL = 'FETCH_CONVERSATION_MESSAGES_SUCCESSFUL',
+    FETCH_CONVERSATION_MESSAGES_ERROR = 'FETCH_CONVERSATION_MESSAGES_ERROR',
     SEND_MESSAGE = 'SEND_MESSAGE',
+    SELECT_CONVERSATION = 'SELECT_CONVERSATION',
     STORE_DRAFT_MESSAGE = 'STORE_DRAFT_MESSAGE',
     FILTER_CONVERSATIONS = 'FILTER_CONVERSATIONS'
 }
@@ -36,22 +37,24 @@ export interface FetchConversationsErrorAction {
     payload: string;
 }
 
-export interface SelectConversationSuccessfulAction {
-    type: ChatActionType.SELECT_CONVERSATION_SUCCESSFUL;
-    payload: {
-        conversationId: string;
-        messages: Message[];
-    };
+export interface FetchConversationMessagesSuccessfulAction {
+    type: ChatActionType.FETCH_CONVERSATION_MESSAGES_SUCCESSFUL;
+    payload: Message[];
 }
 
-export interface SelectConversationErrorAction {
-    type: ChatActionType.SELECT_CONVERSATION_ERROR;
+export interface FetchConversationMessagesErrorAction {
+    type: ChatActionType.FETCH_CONVERSATION_MESSAGES_ERROR;
     payload: string;
 }
 
 export interface SendMessageAction {
     type: ChatActionType.SEND_MESSAGE;
     payload: Message;
+}
+
+export interface SelectConversationAction {
+    type: ChatActionType.SELECT_CONVERSATION;
+    payload: string;
 }
 
 export interface StoreDraftMessageAction {
@@ -70,8 +73,9 @@ export interface FilterConversationMessageAction {
 export type ChatAction =
     FetchConversationsSuccessfulAction |
     FetchConversationsErrorAction |
-    SelectConversationSuccessfulAction |
-    SelectConversationErrorAction |
+    FetchConversationMessagesSuccessfulAction |
+    FetchConversationMessagesErrorAction |
     SendMessageAction |
+    SelectConversationAction |
     StoreDraftMessageAction |
     FilterConversationMessageAction;

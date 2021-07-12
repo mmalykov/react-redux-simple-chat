@@ -29,12 +29,12 @@ export const chatReducer = (state = initialState, action: ChatAction): ChatState
             const [lastMessage] = messages;
             const updatedConversation = {
                 ...state.selectedConversation,
-                messages,
                 lastMessage,
             } as Conversation;
 
             return {
                 ...state,
+                messages,
                 conversations: replaceConversation(conversations, (selectedConversation as Conversation).id, updatedConversation),
                 filteredConversations: replaceConversation(filteredConversations, (selectedConversation as Conversation).id, updatedConversation),
                 selectedConversation: updatedConversation
@@ -50,17 +50,13 @@ export const chatReducer = (state = initialState, action: ChatAction): ChatState
 
             return {...state, draftMessages};
         }
-        case ChatActionType.SELECT_CONVERSATION_SUCCESSFUL: {
-            const {conversationId, messages} = action.payload;
-            const selectedConversation = state.conversations.find(c => c.id === conversationId);
+        case ChatActionType.FETCH_CONVERSATION_MESSAGES_SUCCESSFUL:
+            return {...state, messages: action.payload};
+        case ChatActionType.SELECT_CONVERSATION:
+            const selectedConversation = state.conversations.find(c => c.id === action.payload)  as Conversation;
 
-            return {
-                ...state,
-                messages,
-                selectedConversation: selectedConversation as Conversation
-            };
-        }
-        case ChatActionType.SELECT_CONVERSATION_ERROR:
+            return {...state, selectedConversation: selectedConversation};
+        case ChatActionType.FETCH_CONVERSATION_MESSAGES_ERROR:
             return {...state, selectConversationError: action.payload};
         case ChatActionType.FILTER_CONVERSATIONS:
             return {

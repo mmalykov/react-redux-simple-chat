@@ -1,12 +1,19 @@
 import {Dispatch} from "redux";
-import {ChatAction, ChatActionType, FilterConversationMessageAction, SendMessageAction} from "../types/store";
+import {
+    ChatAction,
+    ChatActionType,
+    FetchConversationMessagesSuccessfulAction,
+    FilterConversationMessageAction,
+    SelectConversationAction
+} from "../types/store";
 import {Message, MessageType} from "../../types/message";
 import {Conversation} from "../../types/conversation";
 import {firebaseContextValue} from "../../../contexts/firebase-context";
 import {User} from "../../../users/types/user";
+import {docToModel} from "../helpers";
 import firebase from "firebase";
 
-export const fetchConversations = () => {
+export const fetchConversations = (authId: string | undefined) => {
     return async (dispatch: Dispatch<ChatAction>) => {
         try {
             const conversationsSnapshot = await firebaseContextValue.firestore
@@ -23,10 +30,10 @@ export const fetchConversations = () => {
             const conversations = conversationsSnapshot.docs.map(doc => {
                 const data = doc.data();
 
-                const userDoc = usersSnapshot.docs.find(doc => doc.id === data.userId);
+                const userDoc = usersSnapshot.docs.find(doc => doc.data().authId === authId);
                 const user = docToModel<User>(userDoc);
 
-                const participantsDocs = usersSnapshot.docs.filter(doc => data.participantsIds.includes(doc.id));
+                const participantsDocs = usersSnapshot.docs.filter(doc => doc.data().authId !== authId && data.participantsIds.includes(doc.id));
                 const participants = participantsDocs.map(doc => docToModel<User>(doc));
 
                 const lastMessageDoc = messagesSnapshot.docs.find(doc => doc.id === data.lastMessageId);
@@ -36,6 +43,7 @@ export const fetchConversations = () => {
                     ...data,
                     id: doc.id,
                     user,
+                    userId: user.id,
                     participants,
                     lastMessage,
                 };
@@ -51,34 +59,58 @@ export const fetchConversations = () => {
     }
 };
 
-// TODO: refactor inappropriate name of action creator (does not correspond to loading conversation messages)
-export const  selectConversation = (conversationId: string) => {
+export const fetchConversationMessagesSuccessful = (docs: firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>[]): FetchConversationMessagesSuccessfulAction => {
+    const messages = docs.map(doc => docToModel<Message>(doc))
+
+    return {type: ChatActionType.FETCH_CONVERSATION_MESSAGES_SUCCESSFUL, payload: messages};
+};
+
+export const fetchConversationMessages = (conversationId: string) => {
     return async (dispatch: Dispatch<ChatAction>) => {
         try {
             const messagesSnapshot = await firebaseContextValue.firestore
                 .collection('messages')
                 .where('conversationId', '==', conversationId)
-                .orderBy('createdAt', 'asc')
+                .orderBy('createdAt', 'desc')
                 .get();
-            const messages = messagesSnapshot.docs.map(doc => docToModel<Message>(doc));
 
-            dispatch({type: ChatActionType.SELECT_CONVERSATION_SUCCESSFUL, payload: {conversationId, messages}});
+            dispatch(fetchConversationMessagesSuccessful(messagesSnapshot.docs));
         } catch (e) {
-            dispatch({type: ChatActionType.SELECT_CONVERSATION_ERROR, payload: e.message});
+            dispatch({type: ChatActionType.FETCH_CONVERSATION_MESSAGES_ERROR, payload: e.message});
         }
     };
 };
 
-export const addTextMessage = (content: string, conversationId: string, userId: string): SendMessageAction => ({
-    type: ChatActionType.SEND_MESSAGE,
-    payload: {
-        content,
-        conversationId,
-        userId,
-        messageType: MessageType.TEXT,
-        timestamp: Date.now(),
-        id: `${Date.now()}`
-    }
+export const sendTextMessage = (content: string, conversationId: string, userId: string) => {
+    return async (dispatch: Dispatch<ChatAction>) => {
+        try {
+            const message = {
+                content,
+                conversationId,
+                userId,
+                messageType: MessageType.TEXT,
+                createdAt: Date.now(),
+                editedAt: Date.now(),
+            } as Message;
+
+            const doc = await firebaseContextValue.firestore
+                .collection('messages')
+                .add(message);
+            await firebaseContextValue.firestore
+                .collection('conversations')
+                .doc(conversationId)
+                .update({lastMessageId: doc.id});
+
+            dispatch({type: ChatActionType.SEND_MESSAGE, payload: {id: doc.id, ...message}});
+        } catch (e) {
+            alert(e.message);
+        }
+    };
+};
+
+export const selectConversation = (conversationId: string): SelectConversationAction => ({
+    type: ChatActionType.SELECT_CONVERSATION,
+    payload: conversationId
 });
 
 export const storeDraftTextMessage = (conversationId: string, content: string) => ({
@@ -90,10 +122,3 @@ export const filterConversations = (query: string): FilterConversationMessageAct
     type: ChatActionType.FILTER_CONVERSATIONS,
     payload: query
 });
-
-function docToModel<T extends {id: string | undefined}>(doc: firebase.firestore.QueryDocumentSnapshot | undefined): T {
-    return {
-        id: doc?.id,
-        ...doc?.data(),
-    } as T;
-}

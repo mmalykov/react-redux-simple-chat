@@ -4,10 +4,15 @@ export enum MessageType {
 }
 
 export interface Message {
-    id: string;
+    id: string | undefined;
     userId: string;
     conversationId: string;
     messageType: MessageType;
     content: string;
-    timestamp: number;
+    createdAt: number;
+    editedAt: number;
+    forwarded?: boolean;
+    pinned?: boolean;
+    replayed?: boolean;
+    read?: boolean;
 }

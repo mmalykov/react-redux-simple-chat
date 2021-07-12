@@ -11,7 +11,11 @@ type Props = {
 }
 
 export const ConversationsList: React.FC<Props> = ({conversations, draftMessages}) => {
-    const {selectConversation} = useChatActions();
+    const {selectConversation, fetchConversationMessages} = useChatActions();
+    const selectConversationHandler = (conversationId: string) => {
+        selectConversation(conversationId);
+        fetchConversationMessages(conversationId);
+    };
 
     if (conversations.length === 0) {
         return (
@@ -28,7 +32,7 @@ export const ConversationsList: React.FC<Props> = ({conversations, draftMessages
                     key={conversation.id}
                     conversation={conversation}
                     draftMessage={draftMessages[conversation.id]}
-                    selectConversation={selectConversation}/>)
+                    selectConversation={selectConversationHandler}/>)
             }
         </Grid>
     );
