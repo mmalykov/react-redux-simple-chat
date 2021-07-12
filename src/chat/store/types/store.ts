@@ -21,7 +21,9 @@ export enum ChatActionType {
     FETCH_CONVERSATIONS_ERROR = 'FETCH_CONVERSATIONS_ERROR',
     FETCH_CONVERSATION_MESSAGES_SUCCESSFUL = 'FETCH_CONVERSATION_MESSAGES_SUCCESSFUL',
     FETCH_CONVERSATION_MESSAGES_ERROR = 'FETCH_CONVERSATION_MESSAGES_ERROR',
+    CLEAR_CONVERSATION_MESSAGES = 'CLEAR_CONVERSATION_MESSAGES',
     UPDATE_SELECTED_CONVERSATION_WITH_LAST_MESSAGE = 'UPDATE_SELECTED_CONVERSATION_WITH_LAST_MESSAGE',
+    ADD_NEW_CONVERSATION = 'ADD_NEW_CONVERSATION',
     SELECT_CONVERSATION = 'SELECT_CONVERSATION',
     STORE_DRAFT_MESSAGE = 'STORE_DRAFT_MESSAGE',
     FILTER_CONVERSATIONS = 'FILTER_CONVERSATIONS'
@@ -47,6 +49,10 @@ export interface FetchConversationMessagesErrorAction {
     payload: string;
 }
 
+export interface ClearConversationMessagesAction {
+    type: ChatActionType.CLEAR_CONVERSATION_MESSAGES;
+}
+
 export interface UpdateSelectedConversationWithLastMessageAction {
     type: ChatActionType.UPDATE_SELECTED_CONVERSATION_WITH_LAST_MESSAGE;
     payload: Message;
@@ -55,6 +61,11 @@ export interface UpdateSelectedConversationWithLastMessageAction {
 export interface SelectConversationAction {
     type: ChatActionType.SELECT_CONVERSATION;
     payload: string;
+}
+
+export interface AddNewConversationAction {
+    type: ChatActionType.ADD_NEW_CONVERSATION;
+    payload: Conversation;
 }
 
 export interface StoreDraftMessageAction {
@@ -77,5 +88,7 @@ export type ChatAction =
     FetchConversationMessagesErrorAction |
     UpdateSelectedConversationWithLastMessageAction |
     SelectConversationAction |
+    AddNewConversationAction |
+    ClearConversationMessagesAction |
     StoreDraftMessageAction |
     FilterConversationsAction;

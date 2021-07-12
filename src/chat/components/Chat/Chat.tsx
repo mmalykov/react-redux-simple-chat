@@ -5,6 +5,7 @@ import {ConversationListContainer} from "../ConversationListContainer/Conversati
 import {useChatActions} from "../../store/hooks/useChatActions";
 import {FirebaseContext} from "../../../contexts/firebase-context";
 import {useAuthState} from "react-firebase-hooks/auth";
+import {useUsersActions} from "../../../users/store";
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -17,9 +18,11 @@ export const Chat: React.FC = () => {
     const classes = useStyles();
     const {auth} = useContext(FirebaseContext);
     const [user] = useAuthState(auth);
+    const {setCurrentUser} = useUsersActions();
     const {fetchConversations} = useChatActions();
 
     useEffect(() => {
+        setCurrentUser(user?.uid);
         fetchConversations(user?.uid);
     });
 

@@ -16,10 +16,10 @@ type Props = {
 };
 
 export const ConversationListItem: React.FC<Props> = ({conversation, selectConversation, draftMessage}) => {
-    const {id, lastMessage, participants} = conversation;
+    const {id, lastMessage = null, participants} = conversation;
     const participantsNames = participants.map(p => p.fullName).join(' ');
     const handleClick = () => selectConversation(id);
-    const secondaryContent = draftMessage || lastMessage.content;
+    const secondaryContent = draftMessage || lastMessage?.content;
     const secondaryNode = draftMessage ?
         (
             <React.Fragment>

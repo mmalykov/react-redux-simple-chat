@@ -1,7 +1,9 @@
 import {Dispatch} from "redux";
 import {
+    AddNewConversationAction,
     ChatAction,
     ChatActionType,
+    ClearConversationMessagesAction,
     FetchConversationMessagesSuccessfulAction,
     FilterConversationsAction,
     SelectConversationAction
@@ -13,7 +15,7 @@ import {User} from "../../../users/types/user";
 import {docToModel} from "../helpers";
 import firebase from "firebase";
 
-export const fetchConversations = (authId: string | undefined) => {
+export const fetchConversations = (authId?: string) => {
     return async (dispatch: Dispatch<ChatAction>) => {
         try {
             const conversationsSnapshot = await firebaseContextValue.firestore
@@ -81,6 +83,8 @@ export const fetchConversationMessages = (conversationId: string) => {
     };
 };
 
+export const clearConversationMessages = (): ClearConversationMessagesAction => ({type: ChatActionType.CLEAR_CONVERSATION_MESSAGES});
+
 export const sendTextMessage = (content: string, conversationId: string, userId: string) => {
     return async (dispatch: Dispatch<ChatAction>) => {
         try {
@@ -101,7 +105,10 @@ export const sendTextMessage = (content: string, conversationId: string, userId:
                 .doc(conversationId)
                 .update({lastMessageId: doc.id});
 
-            dispatch({type: ChatActionType.UPDATE_SELECTED_CONVERSATION_WITH_LAST_MESSAGE, payload: {id: doc.id, ...message}});
+            dispatch({
+                type: ChatActionType.UPDATE_SELECTED_CONVERSATION_WITH_LAST_MESSAGE,
+                payload: {id: doc.id, ...message}
+            });
         } catch (e) {
             alert(e.message);
         }
@@ -113,6 +120,11 @@ export const selectConversation = (conversationId: string): SelectConversationAc
     payload: conversationId
 });
 
+export const addNewConversation = (conversation: Conversation): AddNewConversationAction => ({
+    type: ChatActionType.ADD_NEW_CONVERSATION,
+    payload: conversation
+});
+
 export const storeDraftTextMessage = (conversationId: string, content: string) => ({
     type: ChatActionType.STORE_DRAFT_MESSAGE,
     payload: {conversationId, content},
@@ -122,3 +134,51 @@ export const filterConversations = (query: string): FilterConversationsAction =>
     type: ChatActionType.FILTER_CONVERSATIONS,
     payload: query
 });
+
+export const createConversation = (user: User | null, currentUser: User | null) => {
+    return async (dispatch: Dispatch<ChatAction>) => {
+        const participantsIds = [user?.id, currentUser?.id];
+        const docRef = await firebaseContextValue.firestore
+            .collection('conversations')
+            .add({
+                participantsIds,
+                lastMessageId: ''
+            } )
+
+        const usersSnapshot = await firebaseContextValue.firestore
+            .collection('users')
+            .where('id', 'in', participantsIds)
+            .get();
+        const participants = usersSnapshot.docs.map(doc => docToModel<User>(doc));
+
+        const doc = await docRef.get();
+        const conversation = docToModel<Conversation>(doc, {user: currentUser as User, participants});
+
+        await dispatch(addNewConversation(conversation));
+        await dispatch(selectConversation(conversation.id));
+        await dispatch(clearConversationMessages());
+    };
+};
+
+// TODO: refactor move to appropriate file, use userId insted of authId
+export const fetchUsersForNewConversation = async (conversations: Conversation[], authId: string = ''): Promise<User[]> => {
+    try {
+        const existedParticipantsIds = conversations.reduce((participantsIds: string[], conversation) => {
+            if (conversation.user.authId === authId) {
+                const participantsIdsSet = new Set([...participantsIds, ...conversation.participantsIds]);
+                return Array.from(participantsIdsSet.values());
+            }
+
+            return participantsIds;
+        }, []);
+        const excludeParticipantsIds = [conversations[0].userId, ...existedParticipantsIds];
+
+        const querySnapshot = await firebaseContextValue.firestore
+            .collection('users')
+            .get();
+
+        return querySnapshot.docs.filter(doc => !excludeParticipantsIds.includes(doc.id)).map(doc => docToModel<User>(doc));
+    } catch (e) {
+        return [];
+    }
+};

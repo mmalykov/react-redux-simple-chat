@@ -49,10 +49,18 @@ export const chatReducer = (state = initialState, action: ChatAction): ChatState
         }
         case ChatActionType.FETCH_CONVERSATION_MESSAGES_SUCCESSFUL:
             return {...state, messages: action.payload};
+        case ChatActionType.CLEAR_CONVERSATION_MESSAGES:
+            return {...state, messages: []};
         case ChatActionType.SELECT_CONVERSATION:
-            const selectedConversation = state.conversations.find(c => c.id === action.payload)  as Conversation;
+            const selectedConversation = state.conversations.find(c => c.id === action.payload) as Conversation;
 
             return {...state, selectedConversation: selectedConversation};
+        case ChatActionType.ADD_NEW_CONVERSATION:
+            return {
+                ...state,
+                conversations: [...state.conversations, action.payload],
+                filteredConversations: [...state.filteredConversations, action.payload]
+            };
         case ChatActionType.FETCH_CONVERSATION_MESSAGES_ERROR:
             return {...state, selectConversationError: action.payload};
         case ChatActionType.FILTER_CONVERSATIONS:

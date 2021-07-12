@@ -1,8 +1,11 @@
 import firebase from "firebase";
 
-export function docToModel<T extends { id: string | undefined }>(doc: firebase.firestore.QueryDocumentSnapshot | undefined): T {
+type DocumentSnapshot = firebase.firestore.QueryDocumentSnapshot | firebase.firestore.DocumentSnapshot | undefined;
+
+export function docToModel<T extends { id?: string }>(doc: DocumentSnapshot, overrides?: Partial<T>): T {
     return {
         id: doc?.id,
         ...doc?.data(),
+        ...overrides,
     } as T;
 }

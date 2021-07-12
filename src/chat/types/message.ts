@@ -4,7 +4,7 @@ export enum MessageType {
 }
 
 export interface Message {
-    id: string | undefined;
+    id?: string;
     userId: string;
     conversationId: string;
     messageType: MessageType;

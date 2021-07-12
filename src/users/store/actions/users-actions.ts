@@ -4,11 +4,13 @@ import {firebaseContextValue} from "../../../contexts/firebase-context";
 import {User} from "../../types/user";
 import * as h from 'history';
 import {paths} from "../../../routes";
+import firebase from "firebase";
 
 export const registerUser = (email: string, password: string, history: h.History) => {
     return async (dispatch: Dispatch<UsersAction>) => {
         try {
             dispatch({type: UsersActionType.REGISTER_USER});
+            await firebaseContextValue.auth.setPersistence(firebase.auth.Auth.Persistence.NONE);
             const {user} = await firebaseContextValue.auth.createUserWithEmailAndPassword(email, password);
             const userPayload: User = {
                 id: user?.uid as string,
@@ -29,6 +31,7 @@ export const loginUser = (email: string, password: string, history: h.History) =
     return async (dispatch: Dispatch<UsersAction>) => {
         try {
             dispatch({type: UsersActionType.LOGIN_USER});
+            await firebaseContextValue.auth.setPersistence(firebase.auth.Auth.Persistence.NONE);
             const {user} = await firebaseContextValue.auth.signInWithEmailAndPassword(email, password);
             const userPayload: User = {
                 id: user?.uid as string,
@@ -43,4 +46,22 @@ export const loginUser = (email: string, password: string, history: h.History) =
             dispatch({type: UsersActionType.LOGIN_USER_ERROR, payload: e.message,});
         }
     }
+};
+
+export const setCurrentUser = (authId?: string) => {
+    return async (dispatch: Dispatch<UsersAction>) => {
+        const querySnapshot = await firebaseContextValue.firestore
+            .collection('users')
+            .where('authId', '==', authId)
+            .get();
+        const [doc] = querySnapshot.docs;
+
+        const user: User = {
+            id: doc.id,
+            authId,
+            ...doc.data()
+        };
+
+        dispatch({type: UsersActionType.LOGIN_USER_SUCCESSFUL, payload: user});
+    };
 };
