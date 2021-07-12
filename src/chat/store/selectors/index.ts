@@ -13,4 +13,8 @@ export const selectConversationsLoading = ({chat: {conversationsLoadingError, is
     isConversationsLoading
 });
 
+export const selectMessages = ({chat: {messages}}: RootChatState) => ({messages});
+
+export const selectMessagesLoading = ({chat: {selectConversationError}}: RootChatState) => ({selectConversationError});
+
 export const selectDraftMessages = ({chat: {draftMessages}}: RootChatState) => ({draftMessages});

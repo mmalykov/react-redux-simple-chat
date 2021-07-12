@@ -3,10 +3,12 @@ import {List, ListItem, makeStyles} from "@material-ui/core";
 import {MessageListItem} from './MessageListItem/MessageListItem';
 import {Conversation} from "../../types/conversation";
 import {User} from "../../../users/types/user";
+import {Message} from "../../types/message";
 
 
 type Props = {
     selectedConversation: Conversation;
+    messages: Message[];
 }
 
 const useStyles = makeStyles(() => ({
@@ -19,9 +21,9 @@ const useStyles = makeStyles(() => ({
     }
 }));
 
-export const MessagesList: React.FC<Props> = ({selectedConversation}) => {
+export const MessagesList: React.FC<Props> = ({selectedConversation, messages}) => {
     const classes = useStyles();
-    const {messages = [], userId, user, participants} = selectedConversation;
+    const {userId, user, participants} = selectedConversation;
     const allParticipantsMap: { [userId: string]: User } = useMemo(
         () => [user, ...participants].reduce((acc, p) => ({...acc, [p.id]: p}), {}),
         [user, participants]

@@ -9,23 +9,21 @@ export interface ChatState {
     conversations: Conversation[];
     filteredConversations: Conversation[];
     selectedConversation: Conversation | null;
+    selectConversationError: string;
     isConversationsLoading: boolean;
     conversationsLoadingError: string;
+    messages: Message[];
     draftMessages: DraftMessagesMap;
 }
 
 export enum ChatActionType {
-    FETCH_CONVERSATIONS = 'FETCH_CONVERSATIONS',
     FETCH_CONVERSATIONS_SUCCESSFUL = 'FETCH_CONVERSATIONS_SUCCESSFUL',
     FETCH_CONVERSATIONS_ERROR = 'FETCH_CONVERSATIONS_ERROR',
+    SELECT_CONVERSATION_SUCCESSFUL = 'SELECT_CONVERSATION_SUCCESSFUL',
+    SELECT_CONVERSATION_ERROR = 'SELECT_CONVERSATION_ERROR',
     SEND_MESSAGE = 'SEND_MESSAGE',
     STORE_DRAFT_MESSAGE = 'STORE_DRAFT_MESSAGE',
-    SELECT_CONVERSATION = 'SELECT_CONVERSATION',
     FILTER_CONVERSATIONS = 'FILTER_CONVERSATIONS'
-}
-
-export interface FetchConversationsAction {
-    type: ChatActionType.FETCH_CONVERSATIONS;
 }
 
 export interface FetchConversationsSuccessfulAction {
@@ -35,6 +33,19 @@ export interface FetchConversationsSuccessfulAction {
 
 export interface FetchConversationsErrorAction {
     type: ChatActionType.FETCH_CONVERSATIONS_ERROR;
+    payload: string;
+}
+
+export interface SelectConversationSuccessfulAction {
+    type: ChatActionType.SELECT_CONVERSATION_SUCCESSFUL;
+    payload: {
+        conversationId: string;
+        messages: Message[];
+    };
+}
+
+export interface SelectConversationErrorAction {
+    type: ChatActionType.SELECT_CONVERSATION_ERROR;
     payload: string;
 }
 
@@ -51,21 +62,16 @@ export interface StoreDraftMessageAction {
     };
 }
 
-export interface SelectConversationAction {
-    type: ChatActionType.SELECT_CONVERSATION;
-    payload: string;
-}
-
 export interface FilterConversationMessageAction {
     type: ChatActionType.FILTER_CONVERSATIONS;
     payload: string;
 }
 
 export type ChatAction =
-    FetchConversationsAction |
     FetchConversationsSuccessfulAction |
     FetchConversationsErrorAction |
+    SelectConversationSuccessfulAction |
+    SelectConversationErrorAction |
     SendMessageAction |
     StoreDraftMessageAction |
-    SelectConversationAction |
     FilterConversationMessageAction;

@@ -5,15 +5,15 @@ const initialState: ChatState = {
     conversations: [],
     filteredConversations: [],
     selectedConversation: null,
+    selectConversationError: '',
     isConversationsLoading: false,
     conversationsLoadingError: '',
+    messages: [],
     draftMessages: {},
 };
 
 export const chatReducer = (state = initialState, action: ChatAction): ChatState => {
     switch (action.type) {
-        case ChatActionType.FETCH_CONVERSATIONS:
-            return {...state, isConversationsLoading: true};
         case ChatActionType.FETCH_CONVERSATIONS_SUCCESSFUL:
             return {
                 ...state,
@@ -24,8 +24,8 @@ export const chatReducer = (state = initialState, action: ChatAction): ChatState
         case ChatActionType.FETCH_CONVERSATIONS_ERROR:
             return {...state, conversationsLoadingError: action.payload, isConversationsLoading: false};
         case ChatActionType.SEND_MESSAGE: {
-            const {conversations, filteredConversations, selectedConversation} = state;
-            const messages = [action.payload, ...selectedConversation?.messages ?? []];
+            const {conversations, filteredConversations, selectedConversation, messages: oldMessages} = state;
+            const messages = [action.payload, ...oldMessages];
             const [lastMessage] = messages;
             const updatedConversation = {
                 ...state.selectedConversation,
@@ -40,7 +40,7 @@ export const chatReducer = (state = initialState, action: ChatAction): ChatState
                 selectedConversation: updatedConversation
             };
         }
-        case ChatActionType.STORE_DRAFT_MESSAGE:
+        case ChatActionType.STORE_DRAFT_MESSAGE: {
             const {conversationId, content} = action.payload;
             const {[conversationId]: previousContent, ...restDraftMessages} = state.draftMessages;
             const draftMessages = {
@@ -49,10 +49,19 @@ export const chatReducer = (state = initialState, action: ChatAction): ChatState
             };
 
             return {...state, draftMessages};
-        case ChatActionType.SELECT_CONVERSATION:
-            const selectedConversation = state.conversations.find(c => c.id === action.payload);
+        }
+        case ChatActionType.SELECT_CONVERSATION_SUCCESSFUL: {
+            const {conversationId, messages} = action.payload;
+            const selectedConversation = state.conversations.find(c => c.id === conversationId);
 
-            return {...state, selectedConversation: selectedConversation as Conversation};
+            return {
+                ...state,
+                messages,
+                selectedConversation: selectedConversation as Conversation
+            };
+        }
+        case ChatActionType.SELECT_CONVERSATION_ERROR:
+            return {...state, selectConversationError: action.payload};
         case ChatActionType.FILTER_CONVERSATIONS:
             return {
                 ...state,

@@ -9,5 +9,4 @@ export interface Conversation {
     participants: User[];
     lastMessageId: string;
     lastMessage: Message;
-    messages: Message[];
 }

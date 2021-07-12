@@ -20,7 +20,7 @@ export const ConversationListItem: React.FC<Props> = ({conversation, selectConve
     const participantsNames = participants.map(p => p.fullName).join(' ');
     const handleClick = () => selectConversation(id);
     const secondaryContent = draftMessage || lastMessage.content;
-    const secondary = draftMessage ?
+    const secondaryNode = draftMessage ?
         (
             <React.Fragment>
                 <Typography
@@ -31,8 +31,7 @@ export const ConversationListItem: React.FC<Props> = ({conversation, selectConve
                 </Typography>
                 {secondaryContent}
             </React.Fragment>
-        ) :
-        secondaryContent;
+        ) : secondaryContent;
 
     return (
         <ListItem button key={id} onClick={handleClick}>
@@ -47,7 +46,8 @@ export const ConversationListItem: React.FC<Props> = ({conversation, selectConve
                     })}
                 </AvatarGroup>
             </ListItemIcon>
-            <ListItemText primary={participantsNames} secondary={secondary} secondaryTypographyProps={{noWrap: true}}/>
+            <ListItemText primary={participantsNames} secondary={secondaryNode}
+                          secondaryTypographyProps={{noWrap: true}}/>
         </ListItem>
     );
 };
