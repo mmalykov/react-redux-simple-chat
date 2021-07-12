@@ -1,14 +1,12 @@
-import {useContext, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {fetchUsersForNewConversation} from "../store/actions";
-import {FirebaseContext} from "../../contexts/firebaseContext";
-import {useAuthState} from "react-firebase-hooks/auth";
 import {useSelector} from "react-redux";
 import {selectConversations} from "../store/selectors";
 import {User} from "../../users/types/user";
+import {useCurrentUser} from "../../users/store/hooks/useCurrentUser";
 
 export const useUsersForNewConversation = (shouldLoad: boolean) => {
-    const {auth} = useContext(FirebaseContext);
-    const [currentUser] = useAuthState(auth);
+    const currentUser = useCurrentUser();
     const {conversations} = useSelector(selectConversations);
     const [users, setUsers] = useState<User[]>([]);
 
@@ -18,7 +16,7 @@ export const useUsersForNewConversation = (shouldLoad: boolean) => {
         }
 
         async function fetchAndSetUsers() {
-            const users = await fetchUsersForNewConversation(conversations, currentUser?.uid);
+            const users = await fetchUsersForNewConversation(conversations, currentUser?.id);
             setUsers(users);
         }
 

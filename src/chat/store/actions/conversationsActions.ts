@@ -16,7 +16,7 @@ import {
 import {Message, MessageType} from "../../types/message";
 import {User} from "../../../users/types/user";
 
-export const fetchConversations = (loadedConversations: Conversation[], authId?: string) => {
+export const fetchConversations = (loadedConversations: Conversation[], userId?: string) => {
     return async (dispatch: Dispatch<ConversationsAction>) => {
         try {
             dispatch({type: ConversationsActionType.FETCH_CONVERSATIONS});
@@ -26,10 +26,10 @@ export const fetchConversations = (loadedConversations: Conversation[], authId?:
 
             const participantsIds = [...new Set(loadedConversations.flatMap(c => c.participantsIds))];
             const users = await fetchDocumentsByIds<User>('users', participantsIds);
+            const user = users.find(user => user.id === userId);
 
             const conversations = loadedConversations.map(conversation => {
-                const user = users.find(user => user.authId === authId);
-                const participants = users.filter(user => user.authId !== authId && conversation.participantsIds.includes(user.id));
+                const participants = users.filter(user => user.id !== userId && conversation.participantsIds.includes(user.id));
                 const lastMessage = messages.find(message => message.id === conversation.lastMessageId);
 
                 return {
@@ -111,17 +111,17 @@ export const createConversation = (user: User | null, currentUser: User | null) 
 };
 
 // TODO: refactor move to appropriate file, use userId instead of authId
-export const fetchUsersForNewConversation = async (conversations: Conversation[], authId: string = ''): Promise<User[]> => {
+export const fetchUsersForNewConversation = async (conversations: Conversation[], userId: string = ''): Promise<User[]> => {
     try {
         const existedParticipantsIds = conversations.reduce((participantsIds: string[], conversation) => {
-            if (conversation.user.authId === authId) {
+            if (conversation.user.id === userId) {
                 const participantsIdsSet = new Set([...participantsIds, ...conversation.participantsIds]);
                 return Array.from(participantsIdsSet.values());
             }
 
             return participantsIds;
         }, []);
-        const excludeParticipantsIds = [conversations[0].userId, ...existedParticipantsIds];
+        const excludeParticipantsIds = [userId, ...existedParticipantsIds];
 
         return await fetchDocumentsNotInIds<User>('users', excludeParticipantsIds);
     } catch (e) {

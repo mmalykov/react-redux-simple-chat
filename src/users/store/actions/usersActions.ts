@@ -1,18 +1,21 @@
 import {Dispatch} from "redux";
-import {UsersAction, UsersActionType} from "../types/store";
-import {firebaseContextValue} from "../../../contexts/firebaseContext";
-import {User} from "../../types/user";
 import * as h from 'history';
+import {UsersAction, UsersActionType} from "../types/store";
+import {User} from "../../types/user";
 import {paths} from "../../../routes";
-import firebase from "firebase";
-import {fetchOneDocumentByFieldValue, updateDocumentInCollection} from "../../../integrations";
+import {
+    createUserWithEmailAndPassword,
+    signInUserWithEmailAndPassword,
+    fetchOneDocumentByFieldValue,
+    updateDocumentInCollection
+} from "../../../integrations";
 
 export const registerUser = (email: string, password: string, history: h.History) => {
     return async (dispatch: Dispatch<UsersAction>) => {
         try {
             dispatch({type: UsersActionType.REGISTER_USER});
-            await firebaseContextValue.auth.setPersistence(firebase.auth.Auth.Persistence.NONE);
-            const {user} = await firebaseContextValue.auth.createUserWithEmailAndPassword(email, password);
+
+            const user = await createUserWithEmailAndPassword(email, password);
             const userPayload: User = {
                 id: user?.uid as string,
                 fullName: user?.displayName as string,
@@ -32,8 +35,7 @@ export const loginUser = (email: string, password: string, history: h.History) =
     return async (dispatch: Dispatch<UsersAction>) => {
         try {
             dispatch({type: UsersActionType.LOGIN_USER});
-            await firebaseContextValue.auth.setPersistence(firebase.auth.Auth.Persistence.NONE);
-            const {user} = await firebaseContextValue.auth.signInWithEmailAndPassword(email, password);
+            const user = await signInUserWithEmailAndPassword(email, password);
             const userPayload: User = {
                 id: user?.uid as string,
                 fullName: user?.displayName as string,

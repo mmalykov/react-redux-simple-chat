@@ -1,12 +1,10 @@
-import React, {useContext} from 'react';
+import React from 'react';
 import {Redirect, Route, Switch} from 'react-router-dom'
 import {authorizedRoutes, paths, publicRoutes} from "../../routes";
-import {FirebaseContext} from "../../contexts/firebaseContext";
-import {useAuthState} from "react-firebase-hooks/auth";
+import {useAuthorizedUser} from "../../integrations";
 
 export const AppRouter = () => {
-    const {auth} = useContext(FirebaseContext);
-    const [user] = useAuthState(auth);
+    const user = useAuthorizedUser();
 
     return user ?
         (
