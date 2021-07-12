@@ -1,5 +1,5 @@
 import firebase from "firebase";
-import {firebaseContextValue} from "./firebaseContext";
+import {firebaseContextValue} from "../contexts/firebaseContext";
 
 export const createUserWithEmailAndPassword = async (email: string, password: string) => {
     try {

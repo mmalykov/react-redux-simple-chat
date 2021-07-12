@@ -1,5 +1,5 @@
 import {useContext} from "react";
-import {FirebaseContext} from "./firebaseContext";
+import {FirebaseContext} from "../contexts/firebaseContext";
 import {useAuthState} from "react-firebase-hooks/auth";
 
 export const useAuthorizedUser = () => {
