@@ -5,6 +5,7 @@ import {User} from "../../types/user";
 import * as h from 'history';
 import {paths} from "../../../routes";
 import firebase from "firebase";
+import {fetchDocumentsByFieldValue} from "../../../integrations";
 
 export const registerUser = (email: string, password: string, history: h.History) => {
     return async (dispatch: Dispatch<UsersAction>) => {
@@ -50,10 +51,7 @@ export const loginUser = (email: string, password: string, history: h.History) =
 
 export const setCurrentUser = (authId?: string) => {
     return async (dispatch: Dispatch<UsersAction>) => {
-        const querySnapshot = await firebaseContextValue.firestore
-            .collection('users')
-            .where('authId', '==', authId)
-            .get();
+        const querySnapshot = await fetchDocumentsByFieldValue('users', 'authId', authId);
         const [doc] = querySnapshot.docs;
 
         const user: User = {

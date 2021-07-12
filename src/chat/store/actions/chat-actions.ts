@@ -10,29 +10,28 @@ import {
 } from "../types/store";
 import {Message, MessageType} from "../../types/message";
 import {Conversation} from "../../types/conversation";
-import {firebaseContextValue} from "../../../contexts/firebase-context";
 import {User} from "../../../users/types/user";
 import {docToModel} from "../helpers";
 import firebase from "firebase";
+import {
+    addDocumentToCollection,
+    fetchAllDocuments,
+    fetchDocumentsByFieldValue,
+    fetchDocumentsByIds,
+    fetchDocumentsNotInIds,
+    updateDocumentInCollection
+} from "../../../integrations";
 
 export const fetchConversations = (authId?: string) => {
     return async (dispatch: Dispatch<ChatAction>) => {
         try {
-            const conversationsSnapshot = await firebaseContextValue.firestore
-                .collection('conversations')
-                .get();
+            const conversationsSnapshot = await fetchAllDocuments('conversations');
 
             const conversationIds = conversationsSnapshot.docs.map(doc => doc.id);
-            const messagesSnapshot = await firebaseContextValue.firestore
-                .collection('messages')
-                .where('conversationId', 'in', conversationIds)
-                .get();
+            const messagesSnapshot = await fetchDocumentsByIds('messages', conversationIds, 'conversationId');
 
             const participantsIds = [...new Set(conversationsSnapshot.docs.flatMap(doc => doc.data().participantsIds))];
-            const usersSnapshot = await firebaseContextValue.firestore
-                .collection('users')
-                .where(firebase.firestore.FieldPath.documentId(), 'in', participantsIds)
-                .get();
+            const usersSnapshot = await fetchDocumentsByIds('users', participantsIds);
 
             const conversations = conversationsSnapshot.docs.map(doc => {
                 const data = doc.data();
@@ -75,11 +74,12 @@ export const fetchConversationMessagesSuccessful = (docs: firebase.firestore.Que
 export const fetchConversationMessages = (conversationId: string) => {
     return async (dispatch: Dispatch<ChatAction>) => {
         try {
-            const messagesSnapshot = await firebaseContextValue.firestore
-                .collection('messages')
-                .where('conversationId', '==', conversationId)
-                .orderBy('createdAt', 'desc')
-                .get();
+            const messagesSnapshot = await fetchDocumentsByFieldValue(
+                'messages',
+                'conversationId',
+                conversationId,
+                {fieldPath: 'createdAt', directionStr: 'desc'}
+            );
 
             dispatch(fetchConversationMessagesSuccessful(messagesSnapshot.docs));
         } catch (e) {
@@ -102,13 +102,8 @@ export const sendTextMessage = (content: string, conversationId: string, userId:
                 editedAt: Date.now(),
             } as Message;
 
-            const doc = await firebaseContextValue.firestore
-                .collection('messages')
-                .add(message);
-            await firebaseContextValue.firestore
-                .collection('conversations')
-                .doc(conversationId)
-                .update({lastMessageId: doc.id});
+            const doc = await addDocumentToCollection('messages', message);
+            await updateDocumentInCollection('conversations', conversationId, {lastMessageId: doc.id});
 
             dispatch({
                 type: ChatActionType.UPDATE_SELECTED_CONVERSATION_WITH_LAST_MESSAGE,
@@ -142,18 +137,10 @@ export const filterConversations = (query: string): FilterConversationsAction =>
 
 export const createConversation = (user: User | null, currentUser: User | null) => {
     return async (dispatch: Dispatch<ChatAction>) => {
-        const participantsIds = [user?.id, currentUser?.id];
-        const docRef = await firebaseContextValue.firestore
-            .collection('conversations')
-            .add({
-                participantsIds,
-                lastMessageId: ''
-            } )
+        const participantsIds = [user?.id, currentUser?.id] as string[];
+        const docRef = await addDocumentToCollection('conversations', {participantsIds, lastMessageId: ''});
 
-        const usersSnapshot = await firebaseContextValue.firestore
-            .collection('users')
-            .where(firebase.firestore.FieldPath.documentId(), 'in', participantsIds)
-            .get();
+        const usersSnapshot = await fetchDocumentsByIds('users', participantsIds);
         const participants = usersSnapshot.docs.map(doc => docToModel<User>(doc));
 
         const doc = await docRef.get();
@@ -182,10 +169,7 @@ export const fetchUsersForNewConversation = async (conversations: Conversation[]
         }, []);
         const excludeParticipantsIds = [conversations[0].userId, ...existedParticipantsIds];
 
-        const querySnapshot = await firebaseContextValue.firestore
-            .collection('users')
-            .where(firebase.firestore.FieldPath.documentId(), 'not-in', excludeParticipantsIds)
-            .get();
+        const querySnapshot = await fetchDocumentsNotInIds('users', excludeParticipantsIds);
 
         return querySnapshot.docs.map(doc => docToModel<User>(doc));
     } catch (e) {
