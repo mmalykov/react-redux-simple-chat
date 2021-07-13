@@ -12,6 +12,7 @@ import {
 import {useConversationMessages} from "../../hooks/useConversationMessages";
 import {useConversationsActions, useMessagesActions} from "../../store/hooks";
 import {Message} from "../../types/message";
+import {EditMessage} from "../EditMessage/EditMessage";
 
 const useConversationContainerStyles = makeStyles(() => ({
     root: {
@@ -52,13 +53,18 @@ export const ConversationContainer: React.FC = () => {
     return (
         <Grid container direction="column" item xs={9} className={containerClasses.root}>
             <MessagesList selectedConversation={selectedConversation} messages={messages}/>
-            <AddMessage
-                conversationId={selectedConversation.id}
-                editingMessage={editingMessage}
-                draftMessage={messageContent}
-                sendMessage={handleSendMessage}
-                editMessage={handleEditMessage}
-                storeDraftMessage={storeDraftTextMessage}/>
+            {editingMessage ? (
+                <EditMessage
+                    editingMessage={editingMessage}
+                    editMessage={handleEditMessage}/>
+            ) : (
+                <AddMessage
+                    conversationId={selectedConversation.id}
+                    draftMessage={messageContent}
+                    sendMessage={handleSendMessage}
+                    storeDraftMessage={storeDraftTextMessage}/>
+            )}
+
         </Grid>
     );
 };
