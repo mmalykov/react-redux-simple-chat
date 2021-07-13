@@ -1,11 +1,15 @@
-import React from "react";
-import {List, ListItem, makeStyles} from "@material-ui/core";
+import React, {useMemo} from "react";
+import {List, makeStyles} from "@material-ui/core";
 import {MessageListItem} from './MessageListItem/MessageListItem';
 import {Conversation} from "../../types/conversation";
+import {User} from "../../../users/types/user";
+import {Message} from "../../types/message";
+import {useMessagesActions} from "../../store/hooks";
 
 
 type Props = {
     selectedConversation: Conversation;
+    messages: Message[];
 }
 
 const useStyles = makeStyles(() => ({
@@ -18,16 +22,27 @@ const useStyles = makeStyles(() => ({
     }
 }));
 
-export const MessagesList: React.FC<Props> = ({selectedConversation}) => {
+export const MessagesList: React.FC<Props> = ({selectedConversation, messages}) => {
     const classes = useStyles();
-    const {messages = [], userId} = selectedConversation;
+    const {userId, user, participants} = selectedConversation;
+    const allParticipantsMap: { [userId: string]: User } = useMemo(
+        () => [user, ...participants].reduce((acc, p) => ({...acc, [p.id]: p}), {}),
+        [user, participants]
+    );
+    const {setEditingMessage, deleteMessage} = useMessagesActions();
 
     return (
         <List className={classes.root}>
             {messages.map(message => (
-                <ListItem key={message.id}>
-                    <MessageListItem message={message} isOwn={message.userId === userId}/>
-                </ListItem>
+                    <MessageListItem
+                        key={message.id}
+                        message={message}
+                        editMessage={setEditingMessage}
+                        deleteMessage={deleteMessage}
+                        user={allParticipantsMap[message.userId]}
+                        isOwn={message.userId === userId}
+                        inMultiUserConversation={participants.length > 1}
+                    />
             ))}
         </List>
     )

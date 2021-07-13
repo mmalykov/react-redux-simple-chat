@@ -1,12 +1,12 @@
 import {Message} from "./message";
-import {User} from "../../models/user";
+import {User} from "../../users/types/user";
 
 export interface Conversation {
     id: string;
     userId: string;
     user: User;
-    secondUserId: string;
-    secondUser: User;
+    participantsIds: string[];
+    participants: User[];
+    lastMessageId: string;
     lastMessage: Message;
-    messages: Message[];
 }

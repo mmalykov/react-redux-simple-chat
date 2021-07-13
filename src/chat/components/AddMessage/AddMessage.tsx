@@ -1,36 +1,24 @@
-import React, {useState} from "react";
-import {Fab, Grid, TextField} from "@material-ui/core";
-import {Send} from '@material-ui/icons';
+import React from "react";
+import {Message} from "../Message/Message";
 
 type Props = {
-    addMessage: (content: string) => void;
+    conversationId: string;
+    draftMessage: string;
+    sendMessage: (content: string) => void;
+    storeDraftMessage: (conversationId: string, content: string) => void;
 }
 
-export const AddMessage: React.FC<Props> = ({addMessage}) => {
-    const [message, setMessage] = useState('');
+export const AddMessage: React.FC<Props> = ({conversationId, draftMessage, sendMessage, storeDraftMessage}) => {
+    const handleNewMessageChange = (content: string) => {
+        storeDraftMessage(conversationId, content);
+    };
 
-    const handleClick = () => {
-        addMessage(message);
-        setMessage('');
+    const handleAddNewMessageClick = (content: string) => {
+        sendMessage(content);
+        storeDraftMessage(conversationId, '');
     };
 
     return (
-        <Grid container>
-            <Grid item xs={11}>
-                <TextField
-                    label="Write a message ..."
-                    fullWidth
-                    multiline
-                    maxRows={5}
-                    value={message}
-                    onChange={e => setMessage(e.target.value)}
-                />
-            </Grid>
-            <Grid item xs={1}>
-                <Fab color="primary" aria-label="add" onClick={handleClick}>
-                    <Send/>
-                </Fab>
-            </Grid>
-        </Grid>
+        <Message initialContent={draftMessage} contentChange={handleNewMessageChange} buttonClick={handleAddNewMessageClick}/>
     );
 };

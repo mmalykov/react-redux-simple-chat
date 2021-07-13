@@ -1,34 +1,38 @@
 import React from "react";
-import {Grid} from "@material-ui/core";
+import {alpha, Grid, makeStyles} from "@material-ui/core";
 import {ConversationsList} from "../ConversationsList/ConversationsList";
-import {useTypedSelector} from "../../../store/hooks/useTypedSelector";
-import debounce from "@material-ui/core/utils/debounce";
-import {useChatActions} from "../../store/hooks/useChatActions";
-import {SearchTextField} from "../SearchTextField/SearchTextField";
+import {useSelector} from "react-redux";
+import {selectConversationsLoading} from "../../store/selectors";
+import {ConversationListSearch} from "../ConversationsList/ConversationListSearch/ConversationListSearch";
+import {useConversations} from "../../hooks/useConversations";
+
+const useStyles = makeStyles((theme) => ({
+    root: {
+        border: `1px solid ${alpha(theme.palette.primary.dark, 0.1)}`
+    }
+}));
 
 export const ConversationListContainer: React.FC = () => {
-    const {conversations, filteredConversations, conversationsLoadingError, isConversationsLoading} = useTypedSelector(state => state.chat);
-    const {filterConversations} = useChatActions();
-    const filterConversationsDebounced = debounce(filterConversations, 500);
+    const classes = useStyles();
+    const [conversations, filteredConversations] = useConversations();
+    const {conversationsLoadingError, isConversationsLoading} = useSelector(selectConversationsLoading);
 
     return (
-        <Grid item xs={4}>
+        <Grid className={classes.root} item xs={3}>
             <Grid item xs={12} style={{padding: '10px'}}>
-                <SearchTextField queryChanged={filterConversationsDebounced}/>
+                <ConversationListSearch disabled={isConversationsLoading || !!conversationsLoadingError}/>
             </Grid>
-            {isConversationsLoading && (
-                <Grid container alignItems="center" justifyContent="center">
-                    Loading ...
-                </Grid>
-            )}
             {conversationsLoadingError && (
                 <Grid container alignItems="center" justifyContent="center">
                     {conversationsLoadingError}
                 </Grid>
             )}
-            {conversations?.length > 0 && (
-                <ConversationsList conversations={filteredConversations}/>
-            )}
+            {isConversationsLoading ?
+                (<Grid container alignItems="center" justifyContent="center">
+                    Loading...
+                </Grid>) :
+                <ConversationsList allConversations={conversations} visibleConversations={filteredConversations}/>
+            }
         </Grid>
     );
 };

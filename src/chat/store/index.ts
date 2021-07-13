@@ -1,1 +1,1 @@
-export * from './reducers/chatReducer';
+export * from './reducers';

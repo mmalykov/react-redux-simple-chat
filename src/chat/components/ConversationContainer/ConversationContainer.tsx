@@ -2,8 +2,17 @@ import React from "react";
 import {Grid, makeStyles} from "@material-ui/core";
 import {MessagesList} from "../MessagesList/MessagesList";
 import {AddMessage} from "../AddMessage/AddMessage";
-import {useTypedSelector} from "../../../store/hooks/useTypedSelector";
-import {useChatActions} from "../../store/hooks/useChatActions";
+import {useSelector} from "react-redux";
+import {
+    selectConversations,
+    selectDraftMessages,
+    selectEditingMessage,
+    selectMessagesLoading
+} from "../../store/selectors";
+import {useConversationMessages} from "../../hooks/useConversationMessages";
+import {useConversationsActions, useMessagesActions} from "../../store/hooks";
+import {Message} from "../../types/message";
+import {EditMessage} from "../EditMessage/EditMessage";
 
 const useConversationContainerStyles = makeStyles(() => ({
     root: {
@@ -14,25 +23,48 @@ const useConversationContainerStyles = makeStyles(() => ({
 
 export const ConversationContainer: React.FC = () => {
     const containerClasses = useConversationContainerStyles();
-    const {selectedConversation} = useTypedSelector(state => state.chat);
-    const {addTextMessage} = useChatActions();
+    const {selectedConversation} = useSelector(selectConversations);
+    const {fetchMessagesError} = useSelector(selectMessagesLoading);
+    const {editingMessage} = useSelector(selectEditingMessage);
+    const {draftMessages} = useSelector(selectDraftMessages);
+    const {sendTextMessage} = useConversationsActions();
+    const {storeDraftTextMessage, editTextMessage} = useMessagesActions();
+    const [messages] = useConversationMessages(selectedConversation);
+    const messageContent = selectedConversation ?
+        (draftMessages[selectedConversation.id] ?? '') :
+        '';
 
     if (!selectedConversation) {
         return (
             <Grid container alignItems="center" justifyContent="center" item xs={8}>
-                Please select the conversation
+                {fetchMessagesError ? fetchMessagesError : 'Please select the conversation'}
             </Grid>
         );
     }
 
-    const addMessageHandler = (content: string) => {
-        addTextMessage(content, selectedConversation.id, selectedConversation.userId);
+    const handleSendMessage = (content: string) => {
+        sendTextMessage(content, selectedConversation.id, selectedConversation.userId);
+    };
+
+    const handleEditMessage = (message: Message) => {
+        editTextMessage(message);
     };
 
     return (
-        <Grid container direction="column" item xs={8} className={containerClasses.root}>
-            <MessagesList selectedConversation={selectedConversation}/>
-            <AddMessage addMessage={addMessageHandler}/>
+        <Grid container direction="column" item xs={9} className={containerClasses.root}>
+            <MessagesList selectedConversation={selectedConversation} messages={messages}/>
+            {editingMessage ? (
+                <EditMessage
+                    editingMessage={editingMessage}
+                    editMessage={handleEditMessage}/>
+            ) : (
+                <AddMessage
+                    conversationId={selectedConversation.id}
+                    draftMessage={messageContent}
+                    sendMessage={handleSendMessage}
+                    storeDraftMessage={storeDraftTextMessage}/>
+            )}
+
         </Grid>
     );
 };
