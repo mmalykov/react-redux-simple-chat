@@ -1,5 +1,5 @@
 import React, {useMemo} from "react";
-import {List, ListItem, makeStyles} from "@material-ui/core";
+import {List, makeStyles} from "@material-ui/core";
 import {MessageListItem} from './MessageListItem/MessageListItem';
 import {Conversation} from "../../types/conversation";
 import {User} from "../../../users/types/user";
@@ -32,14 +32,13 @@ export const MessagesList: React.FC<Props> = ({selectedConversation, messages}) 
     return (
         <List className={classes.root}>
             {messages.map(message => (
-                <ListItem key={message.id}>
                     <MessageListItem
+                        key={message.id}
                         message={message}
                         user={allParticipantsMap[message.userId]}
                         isOwn={message.userId === userId}
                         inMultiUserConversation={participants.length > 1}
                     />
-                </ListItem>
             ))}
         </List>
     )
