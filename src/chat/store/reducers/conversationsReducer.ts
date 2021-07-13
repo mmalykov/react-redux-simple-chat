@@ -1,5 +1,5 @@
 import {Conversation} from "../../types/conversation";
-import {ConversationsAction, ConversationsActionType, ConversationsState} from "../types/conversations";
+import {ConversationsAction, ConversationsActionType, ConversationsState} from "../types";
 
 const initialState: ConversationsState = {
     conversations: [],
@@ -13,7 +13,7 @@ const initialState: ConversationsState = {
 export const conversationsReducer = (state = initialState, action: ConversationsAction): ConversationsState => {
     switch (action.type) {
         case ConversationsActionType.FETCH_CONVERSATIONS:
-            return {...state, isConversationsLoading: true};
+            return {...state, isConversationsLoading: action.payload};
         case ConversationsActionType.FETCH_CONVERSATIONS_SUCCESSFUL:
             return {
                 ...state,

@@ -12,10 +12,10 @@ import {User} from "../../../users/types/user";
 import {fetchMessagesByIds, postNewConversation, postNewMessage, putConversation} from "../../api";
 import {fetchUsersByIds} from "../../../users/api";
 
-export const fetchConversations = (loadedConversations: Conversation[], userId?: string) => {
+export const fetchConversations = (loadedConversations: Conversation[], userId?: string, loadSilent: boolean = false) => {
     return async (dispatch: Dispatch<ConversationsAction>) => {
         try {
-            dispatch({type: ConversationsActionType.FETCH_CONVERSATIONS});
+            dispatch({type: ConversationsActionType.FETCH_CONVERSATIONS, payload: loadSilent});
 
             const conversationIds = loadedConversations.map(c => c.id);
             const messages = await fetchMessagesByIds(conversationIds);
@@ -88,9 +88,9 @@ export const filterConversations = (query: string): FilterConversationsAction =>
     payload: query
 });
 
-export const createConversation = (user: User | null, currentUser: User | null) => {
+export const createConversation = (users: User[], currentUser: User | null) => {
     return async (dispatch: Dispatch<ConversationsAction>) => {
-        const participantsIds = [user?.id, currentUser?.id] as string[];
+        const participantsIds = [...users.map(u => u.id), currentUser?.id] as string[];
         const participants = await fetchUsersByIds(participantsIds);
 
         const conversationModel = {participantsIds, lastMessageId: ''};

@@ -1,4 +1,4 @@
-import {useEffect} from "react";
+import {useEffect, useRef} from "react";
 import {useConversationsActions} from "../store/hooks";
 import {Conversation} from "../types/conversation";
 import {useSelector} from "react-redux";
@@ -7,6 +7,7 @@ import {useCurrentUser} from "../../users/store/hooks/useCurrentUser";
 import {subscribeOnConversationsChanges} from "../api";
 
 export const useConversations = () => {
+    const firstUpdate = useRef(true);
     const user = useCurrentUser();
     const {fetchConversations} = useConversationsActions();
     const {conversations, filteredConversations} = useSelector(selectConversations);
@@ -16,8 +17,14 @@ export const useConversations = () => {
             return;
         }
 
+        if (!firstUpdate.current) {
+            firstUpdate.current = false;
+        }
+
+        const loadSilent = !firstUpdate.current;
+
         return subscribeOnConversationsChanges((conversations: Conversation[]) => {
-            fetchConversations(conversations, user.id);
+            fetchConversations(conversations, user.id, loadSilent);
         });
     }, [user]);
 

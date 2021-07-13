@@ -15,8 +15,8 @@ export const CreateConversation: React.FC = () => {
     const {createConversation: createConversationAction} = useConversationsActions();
     const {clearConversationMessages} = useMessagesActions();
 
-    const createConversation = (user: User | null) => {
-        createConversationAction(user, currentUser);
+    const createConversation = (users: User[]) => {
+        createConversationAction(users, currentUser);
         clearConversationMessages();
         handleClose();
     }
@@ -35,7 +35,7 @@ export const CreateConversation: React.FC = () => {
                 <ForumIcon/>
             </IconButton>
             <Modal open={open} onClose={handleClose}>
-                <CreateConversationModalBody users={users} createConversation={createConversation} />
+                <CreateConversationModalBody users={users} createConversation={createConversation}/>
             </Modal>
         </React.Fragment>
     );

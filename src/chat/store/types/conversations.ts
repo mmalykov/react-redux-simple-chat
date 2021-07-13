@@ -22,6 +22,7 @@ export enum ConversationsActionType {
 
 export interface FetchConversationsAction {
     type: ConversationsActionType.FETCH_CONVERSATIONS;
+    payload: boolean;
 }
 
 export interface FetchConversationsSuccessfulAction {
