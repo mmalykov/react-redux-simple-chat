@@ -7,3 +7,5 @@ export const selectMessages = ({messages: {messages}}: RootMessagesState) => ({m
 export const selectMessagesLoading = ({messages: {fetchMessagesError}}: RootMessagesState) => ({fetchMessagesError});
 
 export const selectDraftMessages = ({messages: {draftMessages}}: RootMessagesState) => ({draftMessages});
+
+export const selectEditingMessage = ({messages: {editingMessage}}: RootMessagesState) => ({editingMessage});

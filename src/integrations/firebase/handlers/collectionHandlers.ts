@@ -59,6 +59,19 @@ export const addDocumentToCollection = async <T>(collection: Collection, documen
     return docToModel<T>(doc, overrides);
 };
 
+export const deleteDocumentFromCollection = async (collection: Collection, documentId: string): Promise<boolean> => {
+    try {
+        await firebase.firestore()
+            .collection(collection)
+            .doc(documentId)
+            .delete();
+
+        return true;
+    } catch(e) {
+        return false
+    }
+};
+
 export const updateDocumentInCollection = async <T>(collection: Collection, documentId: string, updatedData: Partial<T>) => {
     await firebase.firestore()
         .collection(collection)

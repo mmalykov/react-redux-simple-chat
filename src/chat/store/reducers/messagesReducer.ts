@@ -4,6 +4,7 @@ const initialState: MessagesState = {
     messages: [],
     draftMessages: {},
     fetchMessagesError: '',
+    editingMessage: null,
 };
 
 export const messagesReducer = (state = initialState, action: MessagesAction): MessagesState => {
@@ -24,6 +25,10 @@ export const messagesReducer = (state = initialState, action: MessagesAction): M
 
             return {...state, draftMessages};
         }
+        case MessagesActionType.EDIT_MESSAGE:
+            return {...state, editingMessage: action.payload};
+        case MessagesActionType.EDIT_MESSAGE_SUCCESSFUL:
+            return {...state, editingMessage: null};
         default:
             return state
     }

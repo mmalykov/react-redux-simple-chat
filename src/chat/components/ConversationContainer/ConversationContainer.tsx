@@ -3,9 +3,15 @@ import {Grid, makeStyles} from "@material-ui/core";
 import {MessagesList} from "../MessagesList/MessagesList";
 import {AddMessage} from "../AddMessage/AddMessage";
 import {useSelector} from "react-redux";
-import {selectConversations, selectDraftMessages, selectMessagesLoading} from "../../store/selectors";
+import {
+    selectConversations,
+    selectDraftMessages,
+    selectEditingMessage,
+    selectMessagesLoading
+} from "../../store/selectors";
 import {useConversationMessages} from "../../hooks/useConversationMessages";
 import {useConversationsActions, useMessagesActions} from "../../store/hooks";
+import {Message} from "../../types/message";
 
 const useConversationContainerStyles = makeStyles(() => ({
     root: {
@@ -18,9 +24,10 @@ export const ConversationContainer: React.FC = () => {
     const containerClasses = useConversationContainerStyles();
     const {selectedConversation} = useSelector(selectConversations);
     const {fetchMessagesError} = useSelector(selectMessagesLoading);
+    const {editingMessage} = useSelector(selectEditingMessage);
     const {draftMessages} = useSelector(selectDraftMessages);
     const {sendTextMessage} = useConversationsActions();
-    const {storeDraftTextMessage} = useMessagesActions();
+    const {storeDraftTextMessage, editTextMessage} = useMessagesActions();
     const [messages] = useConversationMessages(selectedConversation);
     const messageContent = selectedConversation ?
         (draftMessages[selectedConversation.id] ?? '') :
@@ -34,8 +41,12 @@ export const ConversationContainer: React.FC = () => {
         );
     }
 
-    const handleAddMessage = (content: string) => {
+    const handleSendMessage = (content: string) => {
         sendTextMessage(content, selectedConversation.id, selectedConversation.userId);
+    };
+
+    const handleEditMessage = (message: Message) => {
+        editTextMessage(message);
     };
 
     return (
@@ -43,8 +54,10 @@ export const ConversationContainer: React.FC = () => {
             <MessagesList selectedConversation={selectedConversation} messages={messages}/>
             <AddMessage
                 conversationId={selectedConversation.id}
+                editingMessage={editingMessage}
                 draftMessage={messageContent}
-                addMessage={handleAddMessage}
+                sendMessage={handleSendMessage}
+                editMessage={handleEditMessage}
                 storeDraftMessage={storeDraftTextMessage}/>
         </Grid>
     );

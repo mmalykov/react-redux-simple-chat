@@ -15,4 +15,5 @@ export interface Message {
     pinned?: boolean;
     replayed?: boolean;
     read?: boolean;
+    edited?: boolean;
 }

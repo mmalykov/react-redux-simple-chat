@@ -1,5 +1,6 @@
 import {
     addDocumentToCollection,
+    deleteDocumentFromCollection,
     fetchDocumentsByFieldValue,
     fetchDocumentsByIds, onCollectionByFieldValueSnapshot, onCollectionSnapshot,
     updateDocumentInCollection
@@ -39,6 +40,14 @@ export const fetchMessagesByConversationId = async (conversationId: string) => {
 
 export const postNewMessage = async (message: Message) => {
     return await addDocumentToCollection<Message>('messages', message);
+};
+
+export const putMessage = async (messageId: string, message: Partial<Message>) => {
+    await updateDocumentInCollection<Message>('messages', messageId, message);
+}
+
+export const deleteMessage = async (message: Message) => {
+    return await deleteDocumentFromCollection('messages', message.id as string);
 };
 
 export const postNewConversation = async (conversation: Partial<Conversation>, overrides: Partial<Conversation>) => {

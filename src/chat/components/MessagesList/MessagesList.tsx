@@ -4,6 +4,7 @@ import {MessageListItem} from './MessageListItem/MessageListItem';
 import {Conversation} from "../../types/conversation";
 import {User} from "../../../users/types/user";
 import {Message} from "../../types/message";
+import {useMessagesActions} from "../../store/hooks";
 
 
 type Props = {
@@ -28,6 +29,7 @@ export const MessagesList: React.FC<Props> = ({selectedConversation, messages}) 
         () => [user, ...participants].reduce((acc, p) => ({...acc, [p.id]: p}), {}),
         [user, participants]
     );
+    const {setEditingMessage, deleteMessage} = useMessagesActions();
 
     return (
         <List className={classes.root}>
@@ -35,6 +37,8 @@ export const MessagesList: React.FC<Props> = ({selectedConversation, messages}) 
                     <MessageListItem
                         key={message.id}
                         message={message}
+                        editMessage={setEditingMessage}
+                        deleteMessage={deleteMessage}
                         user={allParticipantsMap[message.userId]}
                         isOwn={message.userId === userId}
                         inMultiUserConversation={participants.length > 1}
