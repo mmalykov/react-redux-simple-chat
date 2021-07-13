@@ -7,14 +7,10 @@ import {
     FilterConversationsAction,
     SelectConversationAction
 } from "../types";
-import {
-    addDocumentToCollection,
-    fetchDocumentsByIds,
-    fetchDocumentsNotInIds,
-    updateDocumentInCollection
-} from "../../../integrations";
 import {Message, MessageType} from "../../types/message";
 import {User} from "../../../users/types/user";
+import {fetchMessagesByIds, postNewConversation, postNewMessage, putConversation} from "../../api";
+import {fetchUsersByIds} from "../../../users/api";
 
 export const fetchConversations = (loadedConversations: Conversation[], userId?: string) => {
     return async (dispatch: Dispatch<ConversationsAction>) => {
@@ -22,10 +18,10 @@ export const fetchConversations = (loadedConversations: Conversation[], userId?:
             dispatch({type: ConversationsActionType.FETCH_CONVERSATIONS});
 
             const conversationIds = loadedConversations.map(c => c.id);
-            const messages = await fetchDocumentsByIds<Message>('messages', conversationIds, 'conversationId');
+            const messages = await fetchMessagesByIds(conversationIds);
 
             const participantsIds = [...new Set(loadedConversations.flatMap(c => c.participantsIds))];
-            const users = await fetchDocumentsByIds<User>('users', participantsIds);
+            const users = await fetchUsersByIds(participantsIds);
             const user = users.find(user => user.id === userId);
 
             const conversations = loadedConversations.map(conversation => {
@@ -39,8 +35,8 @@ export const fetchConversations = (loadedConversations: Conversation[], userId?:
                     userId: user?.id,
                     participants,
                     lastMessage,
-                };
-            }) as Conversation[];
+                } as Conversation;
+            });
 
             dispatch({type: ConversationsActionType.FETCH_CONVERSATIONS_SUCCESSFUL, payload: conversations})
         } catch (e) {
@@ -63,9 +59,9 @@ export const sendTextMessage = (content: string, conversationId: string, userId:
                 createdAt: Date.now(),
                 editedAt: Date.now(),
             } as Message;
+            const message = await postNewMessage(messageModel);
 
-            const message = await addDocumentToCollection<Message>('messages', messageModel);
-            await updateDocumentInCollection('conversations', conversationId, {lastMessageId: message.id});
+            await putConversation(conversationId, {lastMessageId: message.id});
 
             dispatch({
                 type: ConversationsActionType.UPDATE_SELECTED_CONVERSATION_WITH_LAST_MESSAGE,
@@ -95,36 +91,16 @@ export const filterConversations = (query: string): FilterConversationsAction =>
 export const createConversation = (user: User | null, currentUser: User | null) => {
     return async (dispatch: Dispatch<ConversationsAction>) => {
         const participantsIds = [user?.id, currentUser?.id] as string[];
-        const participants = await fetchDocumentsByIds<User>('users', participantsIds);
+        const participants = await fetchUsersByIds(participantsIds);
 
-        const documentModel = {participantsIds, lastMessageId: ''};
+        const conversationModel = {participantsIds, lastMessageId: ''};
         const overrides = {
             userId: currentUser?.id,
             user: currentUser as User,
             participants: participants.filter(p => p.id !== currentUser?.id)
         };
-        const conversation = await addDocumentToCollection<Conversation>('conversations', documentModel, overrides);
+        const conversation = await postNewConversation(conversationModel, overrides);
 
-        await dispatch(addNewConversation(conversation));
         await dispatch(selectConversation(conversation.id));
     };
-};
-
-// TODO: refactor move to appropriate file, use userId instead of authId
-export const fetchUsersForNewConversation = async (conversations: Conversation[], userId: string = ''): Promise<User[]> => {
-    try {
-        const existedParticipantsIds = conversations.reduce((participantsIds: string[], conversation) => {
-            if (conversation.user.id === userId) {
-                const participantsIdsSet = new Set([...participantsIds, ...conversation.participantsIds]);
-                return Array.from(participantsIdsSet.values());
-            }
-
-            return participantsIds;
-        }, []);
-        const excludeParticipantsIds = [userId, ...existedParticipantsIds];
-
-        return await fetchDocumentsNotInIds<User>('users', excludeParticipantsIds);
-    } catch (e) {
-        return [];
-    }
 };

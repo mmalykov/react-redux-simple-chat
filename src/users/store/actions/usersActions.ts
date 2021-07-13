@@ -3,12 +3,7 @@ import * as h from 'history';
 import {UsersAction, UsersActionType} from "../types/store";
 import {User} from "../../types/user";
 import {paths} from "../../../routes";
-import {
-    createUserWithEmailAndPassword,
-    signInUserWithEmailAndPassword,
-    fetchOneDocumentByFieldValue,
-    updateDocumentInCollection
-} from "../../../integrations";
+import {createUserWithEmailAndPassword, signInUserWithEmailAndPassword, fetchUserById, putUser,} from "../../api";
 
 export const registerUser = (email: string, password: string, history: h.History) => {
     return async (dispatch: Dispatch<UsersAction>) => {
@@ -53,7 +48,7 @@ export const loginUser = (email: string, password: string, history: h.History) =
 
 export const updateUser = (user: User) => {
     return async (dispatch: Dispatch<UsersAction>) => {
-        await updateDocumentInCollection<User>('users', user.id, user);
+        await putUser<User>(user.id, user);
 
         dispatch({type: UsersActionType.SET_CURRENT_USER, payload: user});
     };
@@ -61,7 +56,7 @@ export const updateUser = (user: User) => {
 
 export const fetchCurrentUser = (authId?: string) => {
     return async (dispatch: Dispatch<UsersAction>) => {
-        const user = await fetchOneDocumentByFieldValue<User>('users', 'authId', authId);
+        const user = await fetchUserById<User>(authId);
 
         dispatch({type: UsersActionType.SET_CURRENT_USER, payload: {authId, ...user}});
     };

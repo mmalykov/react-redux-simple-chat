@@ -1,10 +1,10 @@
 import {useEffect} from "react";
 import {useConversationsActions} from "../store/hooks";
-import {onCollectionSnapshot} from "../../integrations";
 import {Conversation} from "../types/conversation";
 import {useSelector} from "react-redux";
 import {selectConversations} from "../store/selectors";
 import {useCurrentUser} from "../../users/store/hooks/useCurrentUser";
+import {subscribeOnConversationsChanges} from "../api";
 
 export const useConversations = () => {
     const user = useCurrentUser();
@@ -16,7 +16,7 @@ export const useConversations = () => {
             return;
         }
 
-        return onCollectionSnapshot('conversations', (conversations: Conversation[]) => {
+        return subscribeOnConversationsChanges((conversations: Conversation[]) => {
             fetchConversations(conversations, user.id);
         });
     }, [user]);

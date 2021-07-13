@@ -6,7 +6,7 @@ import {
     MessagesAction,
     MessagesActionType
 } from "../types";
-import {fetchDocumentsByFieldValue} from "../../../integrations";
+import {fetchMessagesByConversationId} from "../../api";
 
 export const fetchConversationMessagesSuccessful = (messages: Message[]): FetchConversationMessagesSuccessfulAction => (
     {type: MessagesActionType.FETCH_CONVERSATION_MESSAGES_SUCCESSFUL, payload: messages}
@@ -15,12 +15,7 @@ export const fetchConversationMessagesSuccessful = (messages: Message[]): FetchC
 export const fetchConversationMessages = (conversationId: string) => {
     return async (dispatch: Dispatch<MessagesAction>) => {
         try {
-            const messages = await fetchDocumentsByFieldValue<Message>(
-                'messages',
-                'conversationId',
-                conversationId,
-                {fieldPath: 'createdAt', directionStr: 'desc'}
-            );
+            const messages = await fetchMessagesByConversationId(conversationId);
 
             dispatch(fetchConversationMessagesSuccessful(messages));
         } catch (e) {

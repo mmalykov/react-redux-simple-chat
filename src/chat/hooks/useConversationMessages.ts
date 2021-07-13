@@ -1,10 +1,9 @@
 import {useEffect} from "react";
 import {useSelector} from "react-redux";
 import {Conversation} from "../types/conversation";
-import {Message} from "../types/message";
 import {useMessagesActions} from "../store/hooks";
 import {selectMessages} from "../store/selectors";
-import {onCollectionByFieldValueSnapshot} from "../../integrations";
+import {subscribeOnConversationMessagesChanges} from "../api";
 
 export const useConversationMessages = (conversation: Conversation | null) => {
     const {fetchConversationMessagesSuccessful} = useMessagesActions();
@@ -15,12 +14,7 @@ export const useConversationMessages = (conversation: Conversation | null) => {
             return;
         }
 
-        return onCollectionByFieldValueSnapshot<Message>(
-            'messages',
-            'conversationId', conversation?.id,
-            {fieldPath: 'createdAt', directionStr: 'desc'},
-            fetchConversationMessagesSuccessful
-        );
+        return subscribeOnConversationMessagesChanges(conversation.id, fetchConversationMessagesSuccessful);
     }, [conversation]);
 
     return [messages];
