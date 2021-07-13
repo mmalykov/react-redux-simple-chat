@@ -29,8 +29,19 @@ const useStyles = makeStyles(() => ({
     }
 }));
 
+const useFormStyles = makeStyles(() => ({
+    root: {
+        width: '50%',
+        height: '50%',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-around',
+    }
+}));
+
 export const Account: React.FC = () => {
     const classes = useStyles();
+    const formClasses = useFormStyles();
     const currentUser = useSelector(selectUser);
     const formik = useFormik({
         initialValues: {
@@ -51,7 +62,7 @@ export const Account: React.FC = () => {
               alignItems={"center"}
               justifyContent={"center"}
               direction={"column"}>
-            <form onSubmit={formik.handleSubmit}>
+            <form className={formClasses.root} onSubmit={formik.handleSubmit}>
                 <TextField
                     fullWidth
                     id="email"

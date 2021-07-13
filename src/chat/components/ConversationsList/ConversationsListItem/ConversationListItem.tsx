@@ -11,11 +11,12 @@ const buildAvatarText = (fullName: string = '') => {
 
 type Props = {
     conversation: Conversation;
+    selected: boolean;
     selectConversation: Function;
     draftMessage: string;
 };
 
-export const ConversationListItem: React.FC<Props> = ({conversation, selectConversation, draftMessage}) => {
+export const ConversationListItem: React.FC<Props> = ({conversation, selectConversation, draftMessage, selected= false}) => {
     const {id, lastMessage = null, participants} = conversation;
     const participantsNames = participants.map(p => p.fullName).join(' ');
     const handleClick = () => selectConversation(id);
@@ -24,17 +25,18 @@ export const ConversationListItem: React.FC<Props> = ({conversation, selectConve
         (
             <React.Fragment>
                 <Typography
+                    variant="body2"
                     component="span"
                     color="error"
                 >
-                    Draft:
+                    Draft:&nbsp;
                 </Typography>
                 {secondaryContent}
             </React.Fragment>
         ) : secondaryContent;
 
     return (
-        <ListItem button key={id} onClick={handleClick}>
+        <ListItem button key={id} selected={selected} onClick={handleClick}>
             <ListItemIcon>
                 <AvatarGroup max={3}>
                     {participants.map(participant => {

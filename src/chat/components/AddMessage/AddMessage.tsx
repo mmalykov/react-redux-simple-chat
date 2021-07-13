@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Fab, Grid, TextField} from "@material-ui/core";
+import {Fab, Grid, makeStyles, TextField} from "@material-ui/core";
 import {Send} from '@material-ui/icons';
 
 type Props = {
@@ -9,7 +9,14 @@ type Props = {
     storeDraftMessage: (conversationId: string, content: string) => void;
 }
 
+const useStyles = makeStyles((theme) => ({
+    root: {
+        padding: theme.spacing(1)
+    }
+}));
+
 export const AddMessage: React.FC<Props> = ({conversationId, draftMessage, addMessage, storeDraftMessage}) => {
+    const classes = useStyles();
     const [message, setMessage] = useState(draftMessage);
 
     useEffect(() => {
@@ -28,7 +35,7 @@ export const AddMessage: React.FC<Props> = ({conversationId, draftMessage, addMe
     };
 
     return (
-        <Grid container>
+        <Grid className={classes.root} container>
             <Grid item xs={11}>
                 <TextField
                     label="Write a message ..."

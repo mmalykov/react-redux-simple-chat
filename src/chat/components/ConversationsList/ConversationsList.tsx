@@ -3,7 +3,7 @@ import {useSelector} from "react-redux";
 import {Grid} from "@material-ui/core";
 import {ConversationListItem} from "./ConversationsListItem/ConversationListItem";
 import {useConversationsActions, useMessagesActions} from "../../store/hooks";
-import {selectDraftMessages} from "../../store/selectors";
+import {selectConversations, selectDraftMessages} from "../../store/selectors";
 import {Conversation} from "../../types/conversation";
 
 type Props = {
@@ -12,6 +12,7 @@ type Props = {
 };
 
 export const ConversationsList: React.FC<Props> = ({allConversations, visibleConversations}) => {
+    const {selectedConversation} = useSelector(selectConversations);
     const {draftMessages} = useSelector(selectDraftMessages);
     const {selectConversation} = useConversationsActions();
     const {fetchConversationMessages} = useMessagesActions();
@@ -38,6 +39,7 @@ export const ConversationsList: React.FC<Props> = ({allConversations, visibleCon
                 <ConversationListItem
                     key={conversation.id}
                     conversation={conversation}
+                    selected={selectedConversation?.id === conversation.id}
                     draftMessage={draftMessages[conversation.id]}
                     selectConversation={handleSelectConversation}/>)
             }

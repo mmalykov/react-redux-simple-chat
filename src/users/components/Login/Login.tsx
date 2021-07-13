@@ -27,11 +27,22 @@ const useStyles = makeStyles(() => ({
     }
 }));
 
+const useFormStyles = makeStyles(() => ({
+    root: {
+        width: '50%',
+        height: '20%',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-around',
+    }
+}));
+
 export const Login: React.FC = () => {
+    const classes = useStyles();
+    const formClasses = useFormStyles();
     const history = useHistory();
     const {registerUser, loginUser} = useUsersActions();
     const [actionType, setActionType] = useState<ActionType>('login');
-    const classes = useStyles();
     const formik = useFormik({
         initialValues: {
             email: '',
@@ -54,7 +65,7 @@ export const Login: React.FC = () => {
               alignItems={"center"}
               justifyContent={"center"}
               direction={"column"}>
-            <form onSubmit={formik.handleSubmit}>
+            <form className={formClasses.root} onSubmit={formik.handleSubmit}>
                 <TextField
                     fullWidth
                     id="email"

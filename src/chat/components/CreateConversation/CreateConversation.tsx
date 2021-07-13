@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {useSelector} from "react-redux";
 import {IconButton, Modal} from "@material-ui/core";
-import SendIcon from "@material-ui/icons/Send";
+import ForumIcon from '@material-ui/icons/Forum';
 import {CreateConversationModalBody} from "./CreateConversationModalBody/CreateConversationModalBody";
 import {useUsersForNewConversation} from "../../hooks/useUsersForNewConversation";
 import {useConversationsActions, useMessagesActions} from "../../store/hooks";
@@ -32,7 +32,7 @@ export const CreateConversation: React.FC = () => {
     return (
         <React.Fragment>
             <IconButton aria-label="create conversation" color="inherit" onClick={handleOpen}>
-                <SendIcon/>
+                <ForumIcon/>
             </IconButton>
             <Modal open={open} onClose={handleClose}>
                 <CreateConversationModalBody users={users} createConversation={createConversation} />
