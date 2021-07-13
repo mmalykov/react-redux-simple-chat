@@ -11,7 +11,7 @@ export const useUsersForNewConversation = (shouldLoad: boolean) => {
     const [users, setUsers] = useState<User[]>([]);
 
     useEffect(() => {
-        if (!shouldLoad || conversations.length === 0 || !currentUser) {
+        if (!shouldLoad || !currentUser) {
             return;
         }
 

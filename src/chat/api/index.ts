@@ -11,14 +11,11 @@ import {fetchUsersNotInIds} from "../../users/api";
 // TODO: try to avoid cross module dependency
 export const fetchUsersForNewConversation = async (conversations: Conversation[], userId: string = '') => {
     try {
-        const existedParticipantsIds = conversations.reduce((participantsIds: string[], conversation) => {
-            if (conversation.user.id === userId) {
-                const participantsIdsSet = new Set([...participantsIds, ...conversation.participantsIds]);
-                return Array.from(participantsIdsSet.values());
-            }
+        if (conversations.length === 0) {
+            return await fetchUsersNotInIds([userId]);
+        }
 
-            return participantsIds;
-        }, []);
+        const existedParticipantsIds = extractParticipantsIdsFromConversations(conversations, userId);
         const excludeParticipantsIds = [userId, ...existedParticipantsIds];
 
         return await fetchUsersNotInIds(excludeParticipantsIds);
@@ -64,3 +61,14 @@ export const subscribeOnConversationMessagesChanges = (conversationId: string, c
 export const subscribeOnConversationsChanges = (callback: (conversations: Conversation[]) => void) => {
     return onCollectionSnapshot<Conversation>('conversations', callback);
 };
+
+function extractParticipantsIdsFromConversations(conversations: Conversation[], userId: string): string[] {
+    return conversations.reduce((participantsIds: string[], conversation) => {
+        if (conversation.user.id === userId) {
+            const participantsIdsSet = new Set([...participantsIds, ...conversation.participantsIds]);
+            return Array.from(participantsIdsSet.values());
+        }
+
+        return participantsIds;
+    }, []);
+}

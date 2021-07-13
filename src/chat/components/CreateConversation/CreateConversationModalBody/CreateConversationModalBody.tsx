@@ -22,6 +22,7 @@ const useStyles = makeStyles((theme) => ({
 const CreateConversationModalBodyComponent: React.FC<Props> = ({users, createConversation}) => {
     const classes = useStyles();
     const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
+    const options = users.filter(user => !selectedUsers.includes(user));
 
     return (
         <div className={classes.paper}>
@@ -31,7 +32,7 @@ const CreateConversationModalBodyComponent: React.FC<Props> = ({users, createCon
                 onChange={(event, users) => {
                     setSelectedUsers(users);
                 }}
-                options={users}
+                options={options}
                 getOptionLabel={(user: User) => user.fullName || ''}
                 openOnFocus
                 renderInput={(params) => <TextField {...params} margin="normal"/>}

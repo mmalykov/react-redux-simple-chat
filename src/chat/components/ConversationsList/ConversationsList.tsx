@@ -22,7 +22,11 @@ export const ConversationsList: React.FC<Props> = ({allConversations, visibleCon
     };
 
     if (allConversations.length === 0) {
-        return null;
+        return (
+            <Grid container alignItems="center" justifyContent="center">
+                Please create new conversation
+            </Grid>
+        );
     }
 
     if (visibleConversations.length === 0) {

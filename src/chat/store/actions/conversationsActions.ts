@@ -15,6 +15,10 @@ import {fetchUsersByIds} from "../../../users/api";
 export const fetchConversations = (loadedConversations: Conversation[], userId?: string, loadSilent: boolean = false) => {
     return async (dispatch: Dispatch<ConversationsAction>) => {
         try {
+            if (loadedConversations.length === 0) {
+                return;
+            }
+
             dispatch({type: ConversationsActionType.FETCH_CONVERSATIONS, payload: loadSilent});
 
             const conversationIds = loadedConversations.map(c => c.id);
