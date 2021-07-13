@@ -23,7 +23,7 @@ export const useConversations = () => {
 
         const loadSilent = !firstUpdate.current;
 
-        return subscribeOnConversationsChanges((conversations: Conversation[]) => {
+        return subscribeOnConversationsChanges(user.id, (conversations: Conversation[]) => {
             fetchConversations(conversations, user.id, loadSilent);
         });
     }, [user]);

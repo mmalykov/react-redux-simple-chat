@@ -79,9 +79,10 @@ export const updateDocumentInCollection = async <T>(collection: Collection, docu
         .update(updatedData);
 };
 
-export const onCollectionSnapshot = <T>(collection: Collection, callback: (models: T[]) => void) => {
+export const onCollectionSnapshot = <T>(collection: Collection, userId: string, callback: (models: T[]) => void) => {
     return firebase.firestore()
         .collection(collection)
+        .where('participantsIds', 'array-contains', userId)
         .onSnapshot(querySnapshot => {
             const models = querySnapshot.docs.map(doc => docToModel<T>(doc));
 

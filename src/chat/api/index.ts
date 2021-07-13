@@ -67,8 +67,8 @@ export const subscribeOnConversationMessagesChanges = (conversationId: string, c
     );
 };
 
-export const subscribeOnConversationsChanges = (callback: (conversations: Conversation[]) => void) => {
-    return onCollectionSnapshot<Conversation>('conversations', callback);
+export const subscribeOnConversationsChanges = (userId: string, callback: (conversations: Conversation[]) => void) => {
+    return onCollectionSnapshot<Conversation>('conversations', userId, callback);
 };
 
 function extractParticipantsIdsFromConversations(conversations: Conversation[], userId: string): string[] {
