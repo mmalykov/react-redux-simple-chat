@@ -14,7 +14,7 @@ import AccountCircle from "@material-ui/icons/AccountCircle";
 import MoreIcon from "@material-ui/icons/More";
 import {CreateConversation} from "../../chat/components/CreateConversation/CreateConversation";
 import {paths} from "../../routes";
-import {NavLink} from "react-router-dom";
+import {Link} from "react-router-dom";
 
 const useStyles = makeStyles((theme: Theme) => ({
     grow: {
@@ -79,11 +79,11 @@ export const AppBar: React.FC = () => {
             open={isMenuOpen}
             onClose={handleMenuClose}
         >
-            <NavLink to={paths.account}>
+            <Link to={paths.account}>
                 <MenuItem onClick={handleMenuClose}>
                     My account
                 </MenuItem>
-            </NavLink>
+            </Link>
         </Menu>
     );
 
@@ -97,8 +97,8 @@ export const AppBar: React.FC = () => {
             transformOrigin={{vertical: 'top', horizontal: 'right'}}
             open={isMobileMenuOpen}
             onClose={handleMobileMenuClose}>
-            <MenuItem onClick={handleProfileMenuOpen}>
-                <NavLink to={paths.account}>
+            <Link to={paths.account}>
+                <MenuItem onClick={handleProfileMenuOpen}>
                     <IconButton
                         aria-label="account of current user"
                         aria-controls="primary-search-account-menu"
@@ -107,8 +107,8 @@ export const AppBar: React.FC = () => {
                         <AccountCircle/>
                     </IconButton>
                     <p>My account</p>
-                </NavLink>
-            </MenuItem>
+                </MenuItem>
+            </Link>
         </Menu>
     );
 
@@ -123,10 +123,13 @@ export const AppBar: React.FC = () => {
                         aria-label="open drawer"
                     >
                         <MenuIcon/>
-                    </IconButton>
-                    <Typography className={classes.title} variant="h6" noWrap>
-                        <NavLink to={paths.chat}>My lovely chat</NavLink>
-                    </Typography>
+                    </IconButton>ˆ
+                    <Link to={paths.chat}>
+                        <Typography className={classes.title} variant="h6" noWrap>
+                            My lovely chat
+
+                        </Typography>
+                    </Link>
                     <div className={classes.grow}/>
                     <div className={classes.sectionDesktop}>
                         <CreateConversation/>
